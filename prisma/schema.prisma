@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model AwesomeRepo {
+  id          String   @id @default(cuid())
+  name        String
+  fullName    String   @unique
+  description String?
+  url         String
+  stars       Int      @default(0)
+  forks       Int      @default(0)
+  language    String?
+  topics      String? // JSON array stored as string
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastFetched DateTime @default(now())
+  
+  // Categorization
+  category    String?
+  tags        String? // JSON array stored as string
+  
+  // GitHub specific data
+  githubId    Int      @unique
+  owner       String
+  isAwesome   Boolean  @default(true)
+  
+  @@map("awesome_repos")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  slug        String   @unique
+  color       String?
+  icon        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("categories")
+}
+
+model SearchQuery {
+  id        String   @id @default(cuid())
+  query     String
+  results   Int      @default(0)
+  createdAt DateTime @default(now())
+  
+  @@map("search_queries")
+}
+
+model Analytics {
+  id        String   @id @default(cuid())
+  event     String
+  data      String? // JSON data
+  createdAt DateTime @default(now())
+  
+  @@map("analytics")
+}
