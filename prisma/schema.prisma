@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model AwesomeRepo {
@@ -19,14 +19,14 @@ model AwesomeRepo {
   stars       Int      @default(0)
   forks       Int      @default(0)
   language    String?
-  topics      String? // JSON array stored as string
+  topics      String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   lastFetched DateTime @default(now())
   
   // Categorization
   category    String?
-  tags        String? // JSON array stored as string
+  tags        String[]
   
   // GitHub specific data
   githubId    Int      @unique
