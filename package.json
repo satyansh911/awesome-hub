@@ -3,7 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "description": "A centralized hub for discovering and exploring awesome GitHub repositories",
-  "keywords": ["awesome", "github", "repositories", "discovery", "hacktoberfest"],
+  "keywords": [
+    "awesome",
+    "github",
+    "repositories",
+    "discovery",
+    "hacktoberfest"
+  ],
   "author": "Nafis Reza",
   "license": "MIT",
   "scripts": {
@@ -15,6 +21,12 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset --force",
+    "db:deploy": "prisma migrate deploy",
+    "db:start": "docker-compose up -d",
+    "db:stop": "docker-compose down",
+    "db:restart": "npm run db:stop && npm run db:start",
+    "setup": "npm run db:start && npm run db:generate && npm run db:push && npm run seed",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "seed": "tsx prisma/seed.ts"
@@ -46,6 +58,7 @@
     "eslint-config-next": "15.5.4",
     "prisma": "^6.16.3",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

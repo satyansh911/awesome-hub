@@ -47,7 +47,7 @@ export async function GET(request: Request) {
               stars: repo.stargazers_count,
               forks: repo.forks_count,
               language: repo.language,
-              topics: JSON.stringify(repo.topics),
+              topics: repo.topics || [],
               owner: repo.owner.login,
             },
           })
@@ -74,8 +74,8 @@ export async function GET(request: Request) {
     return NextResponse.json({
       repos: repos.map(repo => ({
         ...repo,
-        topics: repo.topics ? JSON.parse(repo.topics) : [],
-        tags: repo.tags ? JSON.parse(repo.tags) : [],
+        topics: repo.topics || [],
+        tags: repo.tags || [],
       })),
       pagination: {
         page,
