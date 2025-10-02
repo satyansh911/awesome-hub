@@ -14,7 +14,7 @@ export function RepoCard({ repo }: RepoCardProps) {
   const { bookmarks, addBookmark, removeBookmark } = useBookmarks()
 
   // Check if the current repo is already bookmarked
-  const isBookmarked = bookmarks.some(b => b.id === repo.id)
+  const isBookmarked = bookmarks.some(b => b.githubId === repo.githubId)
 
   const formatNumber = (num: number) => {
     if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`
@@ -36,7 +36,7 @@ export function RepoCard({ repo }: RepoCardProps) {
         <button
           aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
           onClick={() =>
-            isBookmarked ? removeBookmark(repo.id) : addBookmark(repo)
+            isBookmarked ? removeBookmark(repo.githubId) : addBookmark(repo)
           }
         >
           <Star
@@ -87,7 +87,7 @@ export function RepoCard({ repo }: RepoCardProps) {
         </div>
         <div className="flex items-center gap-1">
           <Calendar className="w-4 h-4" />
-          <span>{formatDate(repo.updatedAt)}</span>
+          <span>{formatDate(repo.updatedAt.toISOString())}</span>
         </div>
       </div>
 
