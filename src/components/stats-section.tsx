@@ -5,10 +5,6 @@ import { TrendingUp, Users, BookOpen, Zap, Star } from 'lucide-react';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { Skeleton } from './skeleton';
 
-function StatsSkeleton() {
-  return <Skeleton className='h-8 w-16 mx-auto bg-gray-700' />;
-}
-
 export function StatsSection() {
   const [loading, setLoading] = useState(true);
   const { bookmarks } = useBookmarks();
