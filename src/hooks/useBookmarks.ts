@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react'
+import { Repository } from '@/components/featured-repos'
 
 const BOOKMARKS_KEY = 'bookmarks';
 
 export function useBookmarks() {
   // State to store the list of bookmarked repositories
-  const [bookmarks, setBookmarks] = useState<Repo[]>([])
+  const [bookmarks, setBookmarks] = useState<Repository[]>([])
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || '[]') 
        setBookmarks(stored) 
   }, [])
 
-  const addBookmark = (repo: Repo) => {
+  const addBookmark = (repo: Repository) => {
     const newBookmarks = [...bookmarks, repo] 
     setBookmarks(newBookmarks)               
     localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(newBookmarks)) 
