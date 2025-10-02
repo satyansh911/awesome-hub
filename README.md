@@ -16,6 +16,27 @@ AwesomeHub is a centralized platform that aggregates, categorizes, and makes dis
 - **Smart Categorization**: Automatic categorization and tagging of repositories
 - **Trending**: Discover trending and newly added awesome lists
 
+## Visual Tour
+
+Here are some screenshots/GIF showcasing the features of AwesomeHub:
+
+### Homepage
+<img src="https://github.com/user-attachments/assets/b19f7c2a-cbb0-4e05-9f65-961f3fc0a983" alt="Main Dashboard ScreenShot" width="800" />
+<br>
+
+*A glimpse of the AwesomeHub homepage, featuring the search bar and featured repositories.*
+
+### Search in Action
+
+   ![Search GIF]()
+   <br>
+*Searching for "awesome-python" and getting instant results.*
+
+### Live Demo (GIF)
+   ![Awesome List GIF](https://github.com/user-attachments/assets/3da8d87e-79f4-4244-ab89-595a34dd6134)
+   <br>
+*An animated demonstration of exploring awesome lists.*
+
 ## Quick Start
 
 ### Prerequisites
