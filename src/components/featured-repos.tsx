@@ -23,7 +23,6 @@ export function FeaturedRepos() {
   const [loading, setLoading] = useState(true);
   const { bookmarks, addBookmark, removeBookmark } = useBookmarks();
   const isBookmarked = (id: number) => bookmarks.some((b) => b.id === id);
-  console.log(isBookmarked, 'hhh');
 
   useEffect(() => {
     // Mock data for now
