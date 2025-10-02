@@ -7,97 +7,23 @@ async function main() {
 
   // Create or update categories
   const categories = [
-    {
-      name: 'JavaScript',
-      slug: 'javascript',
-      description: 'JavaScript libraries, frameworks, and tools',
-      color: '#f7df1e',
-      icon: '⚡'
-    },
-    {
-      name: 'Python',
-      slug: 'python',
-      description: 'Python frameworks, libraries, and resources',
-      color: '#3776ab',
-      icon: '🐍'
-    },
-    {
-      name: 'React',
-      slug: 'react',
-      description: 'React ecosystem and related tools',
-      color: '#61dafb',
-      icon: '⚛️'
-    },
-    {
-      name: 'Machine Learning',
-      slug: 'machine-learning',
-      description: 'AI/ML frameworks and resources',
-      color: '#ff6b6b',
-      icon: '🤖'
-    },
-    {
-      name: 'DevOps',
-      slug: 'devops',
-      description: 'DevOps tools and practices',
-      color: '#4ecdc4',
-      icon: '🚀'
-    },
-    {
-      name: 'Java',
-      slug: 'java',
-      description: 'Java frameworks, libraries, and resources',
-      color: '#e86e00',
-      icon: '☕'
-    },
-    {
-      name: 'Rust',
-      slug: 'rust',
-      description: 'Rust programming language resources',
-      color: '#dea584',
-      icon: '🦀'
-    },
-    {
-      name: 'Mobile',
-      slug: 'mobile',
-      description: 'Mobile development for iOS and Android',
-      color: '#8c82fc',
-      icon: '📱'
-    },
-    {
-      name: 'Security',
-      slug: 'security',
-      description: 'Cybersecurity, tools, and resources',
-      color: '#ff4757',
-      icon: '🛡️'
-    },
-    {
-      name: 'Design',
-      slug: 'design',
-      description: 'Design systems, UI/UX tools, and resources',
-      color: '#f368e0',
-      icon: '🎨'
-    },
-    {
-      name: 'Data Science',
-      slug: 'data-science',
-      description: 'Data science libraries and tools',
-      color: '#feca57',
-      icon: '📊'
-    },
-    {
-      name: 'Blockchain',
-      slug: 'blockchain',
-      description: 'Blockchain and cryptocurrency resources',
-      color: '#f9ca24',
-      icon: '⛓️'
-    },
-    {
-      name: 'Resources',
-      slug: 'resources',
-      description: 'General developer resources and learning materials',
-      color: '#a4b0be',
-      icon: '📚'
-    }
+    { name: 'JavaScript', slug: 'javascript', description: 'JavaScript libraries, frameworks, and tools', color: '#f7df1e', icon: '⚡' },
+    { name: 'Python', slug: 'python', description: 'Python frameworks, libraries, and resources', color: '#3776ab', icon: '🐍' },
+    { name: 'React', slug: 'react', description: 'React ecosystem and related tools', color: '#61dafb', icon: '⚛️' },
+    { name: 'Machine Learning', slug: 'machine-learning', description: 'AI/ML frameworks and resources', color: '#ff6b6b', icon: '🤖' },
+    { name: 'DevOps', slug: 'devops', description: 'DevOps tools and practices', color: '#4ecdc4', icon: '🚀' },
+    { name: 'Java', slug: 'java', description: 'Java frameworks, libraries, and resources', color: '#e86e00', icon: '☕' },
+    { name: 'Rust', slug: 'rust', description: 'Rust programming language resources', color: '#dea584', icon: '🦀' },
+    { name: 'Mobile', slug: 'mobile', description: 'Mobile development for iOS and Android', color: '#8c82fc', icon: '📱' },
+    { name: 'Security', slug: 'security', description: 'Cybersecurity, tools, and resources', color: '#ff4757', icon: '🛡️' },
+    { name: 'Design', slug: 'design', description: 'Design systems, UI/UX tools, and resources', color: '#f368e0', icon: '🎨' },
+    { name: 'Data Science', slug: 'data-science', description: 'Data science libraries and tools', color: '#feca57', icon: '📊' },
+    { name: 'Blockchain', slug: 'blockchain', description: 'Blockchain and cryptocurrency resources', color: '#f9ca24', icon: '⛓️' },
+    { name: 'Resources', slug: 'resources', description: 'General developer resources and learning materials', color: '#a4b0be', icon: '📚' },
+    // Add missing categories to prevent errors
+    { name: 'Go', slug: 'go', description: 'Go programming language resources', color: '#00ADD8', icon: '🐹' },
+    { name: 'CSS', slug: 'css', description: 'CSS frameworks and styling resources', color: '#563d7c', icon: '💅' },
+    { name: 'C++', slug: 'c-plus-plus', description: 'C++ libraries and resources', color: '#f34b7d', icon: '🔧' },
   ]
 
   for (const category of categories) {
@@ -200,6 +126,7 @@ async function main() {
       owner: 'awesome-css-group',
       isAwesome: true
     },
+    // --- New Repos ---
     {
       githubId: 25186882,
       name: 'awesome-nodejs',
@@ -517,18 +444,19 @@ async function main() {
     }
   ]
 
-  for (const repo of awesomeRepos) {
-    // Find the categoryId for the repo's category name
+for (const repo of awesomeRepos) {
     const categoryRecord = await prisma.category.findUnique({
       where: { name: repo.category },
     });
 
-    // If the category doesn't exist, we might skip or create it
-    // For this seed, we'll assume categories are created first.
-    // If a category might be missing, add error handling or a creation step.
-    const categoryId = categoryRecord?.id;
+    if (!categoryRecord) {
+      console.warn(`⚠️ Category "${repo.category}" not found for repo "${repo.fullName}". Skipping this entry.`);
+      continue;
+    }
 
-    // We need to separate relational data from scalar data for upsert
+    const categoryId = categoryRecord.id;
+    
+    // This removes the string 'category' field before creation
     const { category, ...repoData } = repo;
 
     await prisma.awesomeRepo.upsert({
@@ -540,11 +468,15 @@ async function main() {
         topics: repo.topics,
         tags: repo.tags,
         lastFetched: new Date(),
-        categoryId: categoryId, // Update the categoryId
+        category: {
+          connect: { id: categoryId },
+        },
       },
       create: {
         ...repoData,
-        categoryId: categoryId, // Set the categoryId on create
+        category: {
+          connect: { id: categoryId },
+        },
       },
     })
   }

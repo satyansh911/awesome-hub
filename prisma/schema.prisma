@@ -23,29 +23,35 @@ model AwesomeRepo {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   lastFetched DateTime @default(now())
-  
-  // Categorization
-  category    String?
-  tags        String[]
-  
+
   // GitHub specific data
   githubId    Int      @unique
   owner       String
   isAwesome   Boolean  @default(true)
   
+  // Categorization
+  tags        String[]
+
+  // --- RELATION to Category ---
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+
   @@map("awesome_repos")
 }
 
 model Category {
-  id          String   @id @default(cuid())
-  name        String   @unique
+  id          String        @id @default(cuid())
+  name        String        @unique
   description String?
-  slug        String   @unique
+  slug        String        @unique
   color       String?
   icon        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // --- BACK-RELATION to AwesomeRepo ---
+  repos       AwesomeRepo[]
+
   @@map("categories")
 }
 
@@ -54,15 +60,15 @@ model SearchQuery {
   query     String
   results   Int      @default(0)
   createdAt DateTime @default(now())
-  
+
   @@map("search_queries")
 }
 
 model Analytics {
   id        String   @id @default(cuid())
   event     String
-  data      String? // JSON data
+  data      Json? // Use native JSON type for better querying and validation
   createdAt DateTime @default(now())
-  
+
   @@map("analytics")
 }
