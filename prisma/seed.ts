@@ -122,7 +122,7 @@ async function main() {
       language: 'CSS',
       topics: ['css', 'frontend', 'styling', 'web-development', 'awesome'],
       tags: ['frontend', 'styling', 'design'],
-      category: 'CSS', // Note: 'CSS' category is not in the list
+      category: 'CSS', 
       owner: 'awesome-css-group',
       isAwesome: true
     },
@@ -308,51 +308,6 @@ async function main() {
       isAwesome: true
     },
     {
-      githubId: 62934079,
-      name: 'coding-interview-university',
-      fullName: 'jwasham/coding-interview-university',
-      description: 'A complete computer science study plan to become a software engineer.',
-      url: 'https://github.com/jwasham/coding-interview-university',
-      stars: 293000,
-      forks: 71000,
-      language: null,
-      topics: ['computer-science', 'interview-prep', 'algorithms', 'data-structures', 'education'],
-      tags: ['learning', 'career', 'interview'],
-      category: 'Resources',
-      owner: 'jwasham',
-      isAwesome: true
-    },
-    {
-      githubId: 44963359,
-      name: 'public-apis',
-      fullName: 'public-apis/public-apis',
-      description: 'A collective list of free APIs',
-      url: 'https://github.com/public-apis/public-apis',
-      stars: 291000,
-      forks: 31000,
-      language: 'Python',
-      topics: ['api', 'public-apis', 'development', 'resources', 'free'],
-      tags: ['api', 'data', 'tools'],
-      category: 'Resources',
-      owner: 'public-apis',
-      isAwesome: true
-    },
-    {
-      githubId: 84333213,
-      name: 'developer-roadmap',
-      fullName: 'kamranahmedse/developer-roadmap',
-      description: 'Interactive roadmaps, guides and other educational content to help developers grow in their careers.',
-      url: 'https://github.com/kamranahmedse/developer-roadmap',
-      stars: 275000,
-      forks: 38000,
-      language: 'TypeScript',
-      topics: ['roadmap', 'developer', 'career', 'education', 'learning'],
-      tags: ['career', 'learning', 'guide'],
-      category: 'Resources',
-      owner: 'kamranahmedse',
-      isAwesome: true
-    },
-    {
       githubId: 102559011,
       name: 'awesome-selfhosted',
       fullName: 'awesome-selfhosted/awesome-selfhosted',
@@ -365,36 +320,6 @@ async function main() {
       tags: ['devops', 'privacy', 'tools'],
       category: 'DevOps',
       owner: 'awesome-selfhosted',
-      isAwesome: true
-    },
-    {
-      githubId: 147587789,
-      name: 'the-book-of-secret-knowledge',
-      fullName: 'trimstray/the-book-of-secret-knowledge',
-      description: 'A collection of inspiring lists, manuals, cheatsheets, blogs, hacks, one-liners, cli/web tools and more.',
-      url: 'https://github.com/trimstray/the-book-of-secret-knowledge',
-      stars: 129000,
-      forks: 8200,
-      language: null,
-      topics: ['cheatsheets', 'hacking', 'devops', 'security', 'resources'],
-      tags: ['sysadmin', 'pentesting', 'cli'],
-      category: 'Security',
-      owner: 'trimstray',
-      isAwesome: true
-    },
-    {
-      githubId: 104523360,
-      name: 'system-design-primer',
-      fullName: 'donnemartin/system-design-primer',
-      description: 'Learn how to design large-scale systems. Prep for the system design interview. Includes Anki flashcards.',
-      url: 'https://github.com/donnemartin/system-design-primer',
-      stars: 254000,
-      forks: 43000,
-      language: 'Python',
-      topics: ['system-design', 'interview-prep', 'architecture', 'scalability', 'design-patterns'],
-      tags: ['architecture', 'interview', 'learning'],
-      category: 'Resources',
-      owner: 'donnemartin',
       isAwesome: true
     },
     {
