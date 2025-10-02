@@ -59,13 +59,32 @@ export function StatsSection() {
     return num.toString();
   };
 
+  if (loading) {
+    return (
+      <section className='mb-16'>
+        <div className='grid grid-cols-2 md:grid-cols-4 gap-6'>
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className='bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg'
+            >
+              <Skeleton className='h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4' />
+              <Skeleton className='h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2' />
+              <Skeleton className='h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4' />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className='mb-16'>
       <div className='grid grid-cols-2 md:grid-cols-4 gap-6'>
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <BookOpen className='w-8 h-8 text-blue-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {loading ? <StatsSkeleton /> : formatNumber(stats.repositories)}
+            {formatNumber(stats.repositories)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Repositories
@@ -75,7 +94,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <TrendingUp className='w-8 h-8 text-yellow-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {loading ? <StatsSkeleton /> : formatNumber(stats.stars)}
+            {formatNumber(stats.stars)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Total Stars
@@ -85,7 +104,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <Zap className='w-8 h-8 text-purple-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {loading ? <StatsSkeleton /> : formatNumber(stats.categories)}
+            {formatNumber(stats.categories)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Categories
@@ -95,7 +114,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <Users className='w-8 h-8 text-green-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {loading ? <StatsSkeleton /> : formatNumber(stats.contributors)}
+            {formatNumber(stats.contributors)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Contributors
@@ -104,7 +123,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <Star className='w-8 h-8 text-yellow-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {loading ? <StatsSkeleton /> : formatNumber(stats.bookmarksCount)}
+            {formatNumber(stats.bookmarksCount)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Bookmarked Repos
