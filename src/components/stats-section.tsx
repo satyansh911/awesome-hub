@@ -3,8 +3,14 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp, Users, BookOpen, Zap, Star } from 'lucide-react';
 import { useBookmarks } from '@/hooks/useBookmarks';
+import { Skeleton } from './skeleton';
+
+function StatsSkeleton() {
+  return <Skeleton className='h-8 w-16 mx-auto bg-gray-700' />;
+}
 
 export function StatsSection() {
+  const [loading, setLoading] = useState(true);
   const { bookmarks } = useBookmarks();
   const [stats, setStats] = useState({
     repositories: 0,
@@ -15,31 +21,36 @@ export function StatsSection() {
   });
 
   useEffect(() => {
-    // Animate numbers on mount
-    const targets = {
-      repositories: 1247,
-      stars: 125432,
-      categories: 127,
-      contributors: 8943,
-      bookmarksCount: bookmarks.length,
-    };
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+      // Animate numbers on mount
+      const targets = {
+        repositories: 1247,
+        stars: 125432,
+        categories: 127,
+        contributors: 8943,
+        bookmarksCount: bookmarks.length,
+      };
 
-    const animateStat = (key: keyof typeof stats, target: number) => {
-      let current = 0;
-      const increment = target / 50;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        setStats((prev) => ({ ...prev, [key]: Math.floor(current) }));
-      }, 30);
-    };
+      const animateStat = (key: keyof typeof stats, target: number) => {
+        let current = 0;
+        const increment = target / 50;
+        const statTimer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            current = target;
+            clearInterval(statTimer);
+          }
+          setStats((prev) => ({ ...prev, [key]: Math.floor(current) }));
+        }, 30);
+      };
 
-    Object.entries(targets).forEach(([key, target]) => {
-      animateStat(key as keyof typeof stats, target);
-    });
+      Object.entries(targets).forEach(([key, target]) => {
+        animateStat(key as keyof typeof stats, target);
+      });
+    }, 1000);
+    return () => clearTimeout(timer);
   }, [bookmarks.length]);
 
   const formatNumber = (num: number) => {
@@ -54,7 +65,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <BookOpen className='w-8 h-8 text-blue-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {formatNumber(stats.repositories)}
+            {loading ? <StatsSkeleton /> : formatNumber(stats.repositories)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Repositories
@@ -64,7 +75,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <TrendingUp className='w-8 h-8 text-yellow-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {formatNumber(stats.stars)}
+            {loading ? <StatsSkeleton /> : formatNumber(stats.stars)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Total Stars
@@ -74,7 +85,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <Zap className='w-8 h-8 text-purple-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {stats.categories}
+            {loading ? <StatsSkeleton /> : formatNumber(stats.categories)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Categories
@@ -84,7 +95,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <Users className='w-8 h-8 text-green-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {formatNumber(stats.contributors)}
+            {loading ? <StatsSkeleton /> : formatNumber(stats.contributors)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Contributors
@@ -93,7 +104,7 @@ export function StatsSection() {
         <div className='bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg'>
           <Star className='w-8 h-8 text-yellow-500 mx-auto mb-3' />
           <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-            {formatNumber(stats.bookmarksCount)}
+            {loading ? <StatsSkeleton /> : formatNumber(stats.bookmarksCount)}
           </div>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
             Bookmarked Repos
