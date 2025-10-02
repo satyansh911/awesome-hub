@@ -26,12 +26,6 @@ Here are some screenshots/GIF showcasing the features of AwesomeHub:
 
 *A glimpse of the AwesomeHub homepage, featuring the search bar and featured repositories.*
 
-### Search in Action
-
-   ![Search GIF]()
-   <br>
-*Searching for "awesome-python" and getting instant results.*
-
 ### Live Demo (GIF)
    ![Awesome List GIF](https://github.com/user-attachments/assets/3da8d87e-79f4-4244-ab89-595a34dd6134)
    <br>
