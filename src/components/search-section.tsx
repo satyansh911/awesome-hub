@@ -1,14 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Filter } from 'lucide-react'
+import { Search, Filter, Star } from 'lucide-react'
+import Link from 'next/link'
 
 export function SearchSection() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
 
   const categories = [
-    'all', 'javascript', 'python', 'react', 'node', 'machine-learning', 
+    'all', 'javascript', 'python', 'react', 'node', 'machine-learning',
     'css', 'go', 'rust', 'security', 'devops', 'data-science'
   ]
 
@@ -42,10 +43,23 @@ export function SearchSection() {
               </select>
             </div>
           </div>
-          <button className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium">
-            Search Awesome Repos
-          </button>
-        </div>
+         
+
+         <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-6">
+  <button className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium">
+    Search Awesome Repos
+  </button>
+
+  <Link
+    href="/bookmarks"
+    className="inline-flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-700 hover:to-yellow-400 text-white font-medium rounded-lg shadow transition-all duration-200"
+  >
+    <Star className="w-4 h-4" /> Bookmarks
+  </Link>
+</div>
+
+
+           </div>
       </div>
     </section>
   )
