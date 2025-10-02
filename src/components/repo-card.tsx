@@ -1,50 +1,38 @@
 'use client'
 
-// Import icons from lucide-react for UI elements like star, fork, external link, and calendar
 import { Star, GitFork, ExternalLink, Calendar } from 'lucide-react'
 
-// Import custom hook to manage bookmarks
 import { useBookmarks } from '@/hooks/useBookmarks'
 
-// Import the Repository type for type safety
 import { Repository } from './featured-repos'
 
-// Define props for the RepoCard component
 interface RepoCardProps {
   repo: Repository
 }
 
-// RepoCard component: displays a single repository card
 export function RepoCard({ repo }: RepoCardProps) {
-  // Destructure bookmarks and functions from custom hook
   const { bookmarks, addBookmark, removeBookmark } = useBookmarks()
 
   // Check if the current repo is already bookmarked
   const isBookmarked = bookmarks.some(b => b.id === repo.id)
 
-  // Helper function to format large numbers (e.g., 1500 -> 1.5K)
   const formatNumber = (num: number) => {
     if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`
     if (num >= 1e3) return `${(num / 1e3).toFixed(1)}K`
     return num.toString()
   }
 
-  // Helper function to format dates in "MMM dd" format
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-200">
-      {/* Top section: repo name, full name, bookmark button, and external link */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          {/* Repo name */}
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{repo.name}</h3>
-          {/* Repo full name */}
           <p className="text-sm text-gray-600 dark:text-gray-400">{repo.fullName}</p>
         </div>
 
-        {/* Bookmark button */}
         <button
           aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
           onClick={() =>
@@ -57,7 +45,7 @@ export function RepoCard({ repo }: RepoCardProps) {
           />
         </button>
 
-        {/* External link to GitHub */}
+       
         <a
           href={repo.url}
           target="_blank"
@@ -68,10 +56,8 @@ export function RepoCard({ repo }: RepoCardProps) {
         </a>
       </div>
 
-      {/* Repo description */}
       <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-2">{repo.description}</p>
 
-      {/* Repo topics/tags */}
       <div className="flex flex-wrap gap-1 mb-4">
         {repo.topics.slice(0, 3).map(topic => (
           <span
@@ -81,7 +67,6 @@ export function RepoCard({ repo }: RepoCardProps) {
             {topic}
           </span>
         ))}
-        {/* If more than 3 topics, show "+N" */}
         {repo.topics.length > 3 && (
           <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
             +{repo.topics.length - 3}
@@ -89,7 +74,6 @@ export function RepoCard({ repo }: RepoCardProps) {
         )}
       </div>
 
-      {/* Repo stats: stars, forks, last updated */}
       <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
@@ -107,7 +91,6 @@ export function RepoCard({ repo }: RepoCardProps) {
         </div>
       </div>
 
-      {/* Programming language display */}
       {repo.language && (
         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
           <span className="inline-flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
