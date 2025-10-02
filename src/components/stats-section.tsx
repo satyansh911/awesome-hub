@@ -1,14 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { TrendingUp, Users, BookOpen, Zap } from 'lucide-react'
+import { TrendingUp, Users, BookOpen, Zap, Star } from 'lucide-react'
+import { useBookmarks } from '@/hooks/useBookmarks'
 
 export function StatsSection() {
+  const { bookmarks } = useBookmarks() 
   const [stats, setStats] = useState({
     repositories: 0,
     stars: 0,
     categories: 0,
-    contributors: 0
+    contributors: 0,
+    bookmarksCount: 0 
   })
 
   useEffect(() => {
@@ -17,7 +20,8 @@ export function StatsSection() {
       repositories: 1247,
       stars: 125432,
       categories: 127,
-      contributors: 8943
+      contributors: 8943,
+       bookmarksCount: bookmarks.length 
     }
 
     const animateStat = (key: keyof typeof stats, target: number) => {
@@ -36,7 +40,7 @@ export function StatsSection() {
     Object.entries(targets).forEach(([key, target]) => {
       animateStat(key as keyof typeof stats, target)
     })
-  }, [])
+  }, [bookmarks.length])
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
@@ -78,6 +82,14 @@ export function StatsSection() {
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Contributors</div>
         </div>
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg">
+  <Star className="w-8 h-8 text-yellow-500 mx-auto mb-3" />
+  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+    {formatNumber(stats.bookmarksCount)}
+  </div>
+  <div className="text-sm text-gray-600 dark:text-gray-400">Bookmarked Repos</div>
+</div>
+
       </div>
     </section>
   )

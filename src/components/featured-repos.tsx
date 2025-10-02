@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Star, GitFork, ExternalLink, Calendar } from 'lucide-react'
+import { useBookmarks } from '@/hooks/useBookmarks';
 
-interface Repository {
+export interface Repository {
   id: number
   name: string
   fullName: string
@@ -19,6 +20,10 @@ interface Repository {
 export function FeaturedRepos() {
   const [repos, setRepos] = useState<Repository[]>([])
   const [loading, setLoading] = useState(true)
+  const { bookmarks, addBookmark, removeBookmark } = useBookmarks();
+  const isBookmarked = (id: number) => bookmarks.some(b => b.id === id);
+  console.log(isBookmarked,"hhh")
+
 
   useEffect(() => {
     // Mock data for now
@@ -154,6 +159,21 @@ export function FeaturedRepos() {
                   {repo.fullName}
                 </p>
               </div>
+              <button
+                aria-label={isBookmarked(repo.id) ? "Remove bookmark" : "Add bookmark"}
+                onClick={() =>
+                  isBookmarked(repo.id)
+                    ? removeBookmark(repo.id)
+                    : addBookmark(repo)
+                }
+              >
+                <Star
+                  size={20}
+                  className={`ml-2 mt-1 transition-colors ${isBookmarked(repo.id) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
+                    }`}
+                />
+              </button>
+
               <a
                 href={repo.url}
                 target="_blank"
@@ -163,11 +183,11 @@ export function FeaturedRepos() {
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
-            
+
             <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-2">
               {repo.description}
             </p>
-            
+
             <div className="flex flex-wrap gap-1 mb-4">
               {repo.topics.slice(0, 3).map((topic) => (
                 <span
@@ -183,7 +203,7 @@ export function FeaturedRepos() {
                 </span>
               )}
             </div>
-            
+
             <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
@@ -200,7 +220,7 @@ export function FeaturedRepos() {
                 <span>{formatDate(repo.updatedAt)}</span>
               </div>
             </div>
-            
+
             {repo.language && (
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                 <span className="inline-flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
@@ -212,7 +232,7 @@ export function FeaturedRepos() {
           </div>
         ))}
       </div>
-      
+
       <div className="text-center mt-8">
         <button className="px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium">
           View All Repositories
