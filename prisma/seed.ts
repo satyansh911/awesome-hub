@@ -468,15 +468,11 @@ for (const repo of awesomeRepos) {
         topics: repo.topics,
         tags: repo.tags,
         lastFetched: new Date(),
-        category: {
-          connect: { id: categoryId },
-        },
+        categoryId: categoryId,
       },
       create: {
         ...repoData,
-        category: {
-          connect: { id: categoryId },
-        },
+        categoryId: categoryId,
       },
     })
   }
