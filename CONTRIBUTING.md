@@ -20,28 +20,17 @@ AwesomeHub is officially participating in Hacktoberfest 2025! We welcome contrib
 ### 1. Fork and Clone
 
 ```bash
-# Fork the repository on GitHub, then:
 git clone https://github.com/your-username/awesome-hub.git
 cd awesome-hub
-npm install
 ```
 
 ### 2. Set Up Development Environment
 
 ```bash
-# Start PostgreSQL database
-npm run db:start
+# Install dependencies
+npm install
 
-# Copy environment file
-cp .env.local.example .env
-
-# Add your GitHub token (optional but recommended)
-# Edit .env and add: GITHUB_TOKEN=your_token_here
-# DATABASE_URL should be: postgresql://awesomehub:awesomehub@localhost:5432/awesomehub_dev
-
-# Set up database
-npm run db:generate
-npm run db:push
+# Add your GitHub token in .env (optional but recommended for higher rate limits)
 
 # Start development server
 npm run dev
@@ -84,87 +73,6 @@ style(components): improve button hover states
 - `test`: Adding tests
 - `chore`: Maintenance tasks
 
-## Contribution Areas
-
-### Beginner-Friendly Tasks
-
-Perfect for newcomers to open source or web development:
-
-#### Documentation
-- [ ] Improve README sections
-- [ ] Add code comments
-- [ ] Create API documentation
-- [ ] Add troubleshooting guides
-
-#### Data & Content
-- [ ] Add new awesome repositories
-- [ ] Categorize existing repositories
-- [ ] Add repository descriptions
-- [ ] Create seed data
-- [ ] Validate repository information
-
-#### UI/UX Improvements
-- [ ] Fix responsive design issues
-- [ ] Improve accessibility (ARIA labels, keyboard navigation)
-- [ ] Add loading states
-- [ ] Improve error messages
-- [ ] Add tooltips and help text
-
-### Intermediate Tasks
-
-For developers with some experience:
-
-#### Features
-- [ ] Implement advanced search filters
-- [ ] Add sorting options (stars, forks, updated date)
-- [ ] Create user bookmarking system
-- [ ] Add repository comparison feature
-- [ ] Implement export functionality (JSON, CSV)
-- [ ] Add repository statistics dashboard
-
-#### Technical Improvements
-- [ ] Add unit tests for components
-- [ ] Implement API caching
-- [ ] Add error boundaries
-- [ ] Improve SEO with meta tags
-- [ ] Add progressive web app features
-- [ ] Implement infinite scroll
-
-#### Integration
-- [ ] Add GitHub OAuth integration
-- [ ] Implement repository webhooks
-- [ ] Add email notifications
-- [ ] Create browser extension
-- [ ] Add social sharing features
-
-### Advanced Tasks
-
-For experienced developers:
-
-#### Architecture
-- [ ] Implement microservices architecture
-- [ ] Add Redis caching layer
-- [ ] Create advanced analytics system
-- [ ] Implement real-time updates with WebSockets
-- [ ] Add machine learning recommendations
-- [ ] Create admin dashboard
-
-#### Performance
-- [ ] Database query optimization
-- [ ] Implement CDN for static assets
-- [ ] Add monitoring and alerting
-- [ ] Create comprehensive logging system
-- [ ] Implement rate limiting
-- [ ] Add performance metrics
-
-#### DevOps
-- [ ] Set up CI/CD pipelines
-- [ ] Add Docker containerization
-- [ ] Implement automated testing
-- [ ] Create deployment strategies
-- [ ] Add security scanning
-- [ ] Set up monitoring infrastructure
-
 ## Testing
 
 ### Running Tests
@@ -201,37 +109,38 @@ src/
 │       └── utils.test.ts
 ```
 
-## Database
+## API Architecture
 
-### Schema Changes
+### GitHub API Integration
 
-1. Update `prisma/schema.prisma`
-2. Run `npm run db:generate`
-3. Run `npm run db:push` (development)
-4. Create migration: `npm run db:migrate`
+AwesomeHub uses GitHub's REST API with smart caching for optimal performance:
 
-### Database Management
+- **Smart Caching**: Dual-layer caching (memory + localStorage)
+- **Rate Limiting**: Automatic handling of GitHub API limits
+- **Error Handling**: Graceful fallbacks for API failures
+- **Authentication**: Optional GitHub token for higher limits
+
+### API Endpoints
 
 ```bash
-# Start PostgreSQL (development)
-npm run db:start
+# Featured repositories
+GET /api/featured
 
-# Stop PostgreSQL
-npm run db:stop
+# Repository statistics
+GET /api/stats
 
-# Restart PostgreSQL
-npm run db:restart
+# Search repositories
+GET /api/search?q=query&category=web&language=javascript
 
-# Reset database (WARNING: destroys all data)
-npm run db:stop
-docker volume rm awesome-hub_postgres_data
-npm run db:start
-npm run db:push
+# Health check
+GET /api/status
 ```
 
-### Adding Seed Data
+### Caching Strategy
 
-Edit `prisma/seed.ts` to add sample data for development.
+- **Memory Cache**: 30 minutes TTL for frequent requests
+- **Local Storage**: 60 minutes TTL for browser persistence
+- **Cache Invalidation**: Automatic cleanup of expired entries
 
 ## Design Guidelines
 
@@ -321,6 +230,89 @@ Include before/after screenshots for UI changes
 3. Testing on different browsers/devices
 4. Final approval and merge
 
+## Contribution Areas
+
+### Beginner-Friendly Tasks
+
+Perfect for newcomers to open source or web development:
+
+#### Documentation
+- [ ] Improve README sections
+- [ ] Add code comments
+- [ ] Create API documentation
+- [ ] Add troubleshooting guides
+
+#### Data & Content
+- [ ] Improve GitHub API search filters
+- [ ] Add new repository categories
+- [ ] Enhance repository metadata extraction
+- [ ] Validate repository information
+- [ ] Improve caching strategies
+
+#### UI/UX Improvements
+- [ ] Fix responsive design issues
+- [ ] Improve accessibility (ARIA labels, keyboard navigation)
+- [ ] Add loading states
+- [ ] Improve error messages
+- [ ] Add tooltips and help text
+
+### Intermediate Tasks
+
+For developers with some experience:
+
+#### Features
+- [ ] Implement advanced search filters
+- [ ] Add sorting options (stars, forks, updated date)
+- [ ] Create user bookmarking system
+- [ ] Add repository comparison feature
+- [ ] Implement export functionality (JSON, CSV)
+- [ ] Add repository statistics dashboard
+
+#### Technical Improvements
+- [ ] Add unit tests for components
+- [ ] Enhance API caching strategies
+- [ ] Add error boundaries
+- [ ] Improve SEO with meta tags
+- [ ] Add progressive web app features
+- [ ] Implement infinite scroll
+- [ ] Optimize GitHub API rate limiting
+- [ ] Add request retry mechanisms
+
+#### Integration
+- [ ] Add GitHub OAuth integration
+- [ ] Implement repository webhooks
+- [ ] Add email notifications
+- [ ] Create browser extension
+- [ ] Add social sharing features
+
+### Advanced Tasks
+
+For experienced developers:
+
+#### Architecture
+- [ ] Implement advanced API caching strategies
+- [ ] Add Redis caching layer for production
+- [ ] Create GitHub API analytics system
+- [ ] Implement real-time repository updates
+- [ ] Add machine learning recommendations
+- [ ] Create admin dashboard for API monitoring
+
+#### Performance
+- [ ] Database query optimization
+- [ ] Implement CDN for static assets
+- [ ] Add monitoring and alerting
+- [ ] Create comprehensive logging system
+- [ ] Implement rate limiting
+- [ ] Add performance metrics
+
+#### DevOps
+- [ ] Set up CI/CD pipelines
+- [ ] Add Docker containerization
+- [ ] Implement automated testing
+- [ ] Create deployment strategies
+- [ ] Add security scanning
+- [ ] Set up monitoring infrastructure
+
 ## Recognition
 
 Contributors will be recognized through:
@@ -344,7 +336,8 @@ Contributors will be recognized through:
 - [Next.js Documentation](https://nextjs.org/docs)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Tailwind CSS Docs](https://tailwindcss.com/docs)
-- [Prisma Documentation](https://www.prisma.io/docs/)
+- [GitHub REST API](https://docs.github.com/en/rest)
+- [Octokit.js Documentation](https://octokit.github.io/rest.js/)
 
 ## Code of Conduct
 

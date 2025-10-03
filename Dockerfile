@@ -13,9 +13,6 @@ RUN npm ci --only=production
 # Copy the rest of the application code
 COPY . .
 
-# Generate Prisma client
-RUN npx prisma generate
-
 # Build the Next.js application
 RUN npm run build
 

@@ -1,29 +1,39 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { GitHubService } from '@/lib/github'
+import { cacheFirst } from '@/lib/cache'
 
 export async function GET() {
   try {
-    const stats = await prisma.$transaction([
-      prisma.awesomeRepo.count(),
-      prisma.awesomeRepo.aggregate({
-        _sum: {
-          stars: true,
-          forks: true,
-        },
-      }),
-      prisma.category.count(),
-    ])
+    // Cache stats for 1 hour since they don't change frequently
+    const stats = await cacheFirst(
+      'awesome-hub-stats',
+      async () => {
+        // Get popular awesome repos to calculate stats
+        const repos = await GitHubService.searchAwesomeRepos({
+          minStars: 10,
+          sort: 'stars',
+          order: 'desc'
+        })
 
-    const [repoCount, aggregates, categoryCount] = stats
+        // Get popular languages for category count
+        const languages = await GitHubService.getPopularLanguages()
 
-    return NextResponse.json({
-      repositories: repoCount,
-      totalStars: aggregates._sum.stars || 0,
-      totalForks: aggregates._sum.forks || 0,
-      categories: categoryCount,
-      // Mock additional stats
-      contributors: Math.floor(repoCount * 7.2), // Estimated
-    })
+        const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0)
+        const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0)
+
+        return {
+          repositories: repos.length,
+          totalStars,
+          totalForks,
+          categories: languages.length,
+          // Estimated contributors based on fork counts
+          contributors: Math.floor(totalForks * 0.1), // Rough estimate
+        }
+      },
+      60 // Cache for 1 hour
+    )
+
+    return NextResponse.json(stats)
   } catch (error) {
     console.error('Stats error:', error)
     return NextResponse.json(
