@@ -5,24 +5,29 @@ import { Star, GitFork, ExternalLink, Calendar } from 'lucide-react';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { Skeleton } from './skeleton';
 
+// GitHub API response format
 export interface Repository {
-  githubId: number; 
+  id: number;                 
   name: string;
-  fullName: string;
-  description: string; 
-  stars: number;
-  forks: number;
-  language: string;
-  url: string;
-  updatedAt: Date;             
+  full_name: string;            
+  description: string | null;
+  html_url: string;             
+  stargazers_count: number;      
+  forks_count: number;          
+  language: string | null;
+  updated_at: string;           
   topics: string[];
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
 }
 
 export function FeaturedRepos() {
   const [repos, setRepos] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
   const { bookmarks, addBookmark, removeBookmark } = useBookmarks();
-  const isBookmarked = (githubId: number) => bookmarks.some((b) => b.githubId === githubId);
+  const isBookmarked = (id: number) => bookmarks.some((b) => b.id === id);
 
   useEffect(() => {
     const fetchFeaturedRepos = async () => {
@@ -93,7 +98,7 @@ export function FeaturedRepos() {
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {repos.map((repo) => (
           <div
-            key={repo.githubId}
+            key={repo.id}
             className='bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-200'
           >
             <div className='flex items-start justify-between mb-4'>
@@ -102,23 +107,23 @@ export function FeaturedRepos() {
                   {repo.name}
                 </h3>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
-                  {repo.fullName}
+                  {repo.full_name}
                 </p>
               </div>
               <button
                 aria-label={
-                  isBookmarked(repo.githubId) ? 'Remove bookmark' : 'Add bookmark'
+                  isBookmarked(repo.id) ? 'Remove bookmark' : 'Add bookmark'
                 }
                 onClick={() =>
-                  isBookmarked(repo.githubId)
-                    ? removeBookmark(repo.githubId)
+                  isBookmarked(repo.id)
+                    ? removeBookmark(repo.id)
                     : addBookmark(repo)
                 }
               >
                 <Star
                   size={20}
                   className={`ml-2 mt-1 transition-colors ${
-                    isBookmarked(repo.githubId)
+                    isBookmarked(repo.id)
                       ? 'fill-yellow-400 text-yellow-400'
                       : 'text-gray-400'
                   }`}
@@ -126,7 +131,7 @@ export function FeaturedRepos() {
               </button>
 
               <a
-                href={repo.url}
+                href={repo.html_url}
                 target='_blank'
                 rel='noopener noreferrer'
                 className='p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors'
@@ -159,16 +164,16 @@ export function FeaturedRepos() {
               <div className='flex items-center gap-4'>
                 <div className='flex items-center gap-1'>
                   <Star className='w-4 h-4' />
-                  <span>{formatNumber(repo.stars)}</span>
+                  <span>{formatNumber(repo.stargazers_count)}</span>
                 </div>
                 <div className='flex items-center gap-1'>
                   <GitFork className='w-4 h-4' />
-                  <span>{formatNumber(repo.forks)}</span>
+                  <span>{formatNumber(repo.forks_count)}</span>
                 </div>
               </div>
               <div className='flex items-center gap-1'>
                 <Calendar className='w-4 h-4' />
-                <span>{formatDate(repo.updatedAt.toISOString())}</span>
+                <span>{formatDate(repo.updated_at)}</span>
               </div>
             </div>
 

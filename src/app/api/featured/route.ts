@@ -1,28 +1,27 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { GitHubService } from '@/lib/github'
+import { cacheFirst } from '@/lib/cache'
 
 export async function GET() {
   try {
-    const repos = await prisma.awesomeRepo.findMany({
-      include: {
-        category: true,
+    // Cache featured repos for 30 minutes
+    const repos = await cacheFirst(
+      'featured-repos',
+      async () => {
+        // Get top awesome repositories
+        const allRepos = await GitHubService.searchAwesomeRepos({
+          minStars: 1000, // Only high-quality repos
+          sort: 'stars',
+          order: 'desc'
+        })
+        
+        // Return top 6 for featured section
+        return allRepos.slice(0, 6)
       },
-      orderBy: { stars: 'desc' },
-      take: 6, // Get top 6 repositories for featured section
-    })
+      30 // 30 minutes cache
+    )
 
-    return NextResponse.json(repos.map(repo => ({
-      githubId: repo.githubId,
-      name: repo.name,
-      fullName: repo.fullName,
-      description: repo.description,
-      stars: repo.stars,
-      forks: repo.forks,
-      language: repo.language,
-      url: repo.url,
-      updatedAt: repo.updatedAt,
-      topics: repo.topics,
-    })))
+    return NextResponse.json(repos)
   } catch (error) {
     console.error('Featured repos error:', error)
     return NextResponse.json(

@@ -29,7 +29,7 @@ export default function BookmarksPage() {
 
       <div className="grid grid-cols-1 gap-6" key={bookmarks.length}>
         {bookmarks.map(repo => (
-          <RepoCard key={repo.githubId} repo={repo} /> 
+          <RepoCard key={repo.id} repo={repo} /> 
         ))}
       </div>
     </div>

@@ -18,13 +18,13 @@ export function useBookmarks() {
     localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(newBookmarks)) 
   }
 
-  const removeBookmark = (githubId: number) => {
-    const updated = bookmarks.filter(b => b.githubId !== githubId) 
+  const removeBookmark = (id: number) => {
+    const updated = bookmarks.filter(b => b.id !== id) 
     setBookmarks(updated)                              
     localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(updated)) 
   }
 
-  const isBookmarked = (repoId: number) => bookmarks.some(r => r.githubId === repoId)
+  const isBookmarked = (repoId: number) => bookmarks.some(r => r.id === repoId)
 
   // Return the state and functions for use in components
   return { bookmarks, addBookmark, removeBookmark, isBookmarked }

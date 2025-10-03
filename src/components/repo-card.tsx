@@ -14,7 +14,7 @@ export function RepoCard({ repo }: RepoCardProps) {
   const { bookmarks, addBookmark, removeBookmark } = useBookmarks()
 
   // Check if the current repo is already bookmarked
-  const isBookmarked = bookmarks.some(b => b.githubId === repo.githubId)
+  const isBookmarked = bookmarks.some(b => b.id === repo.id)
 
   const formatNumber = (num: number) => {
     if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`
@@ -30,13 +30,13 @@ export function RepoCard({ repo }: RepoCardProps) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{repo.name}</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{repo.fullName}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{repo.full_name}</p>
         </div>
 
         <button
           aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
           onClick={() =>
-            isBookmarked ? removeBookmark(repo.githubId) : addBookmark(repo)
+            isBookmarked ? removeBookmark(repo.id) : addBookmark(repo)
           }
         >
           <Star
@@ -47,7 +47,7 @@ export function RepoCard({ repo }: RepoCardProps) {
 
        
         <a
-          href={repo.url}
+          href={repo.html_url}
           target="_blank"
           rel="noopener noreferrer"
           className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -78,16 +78,16 @@ export function RepoCard({ repo }: RepoCardProps) {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
             <Star className="w-4 h-4" />
-            <span>{formatNumber(repo.stars)}</span>
+            <span>{formatNumber(repo.stargazers_count)}</span>
           </div>
           <div className="flex items-center gap-1">
             <GitFork className="w-4 h-4" />
-            <span>{formatNumber(repo.forks)}</span>
+            <span>{formatNumber(repo.forks_count)}</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <Calendar className="w-4 h-4" />
-          <span>{formatDate(repo.updatedAt.toISOString())}</span>
+          <span>{formatDate(repo.updated_at)}</span>
         </div>
       </div>
 
