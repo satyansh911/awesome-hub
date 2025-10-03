@@ -6,13 +6,19 @@ import { Header } from '@/components/header'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      {/* Add top padding to account for fixed header */}
+      <main className="pt-16">
         <HeroSection />
         <SearchSection />
         <StatsSection />
-        <FeaturedRepos />
+        <div className="container mx-auto px-4 lg:px-6">
+          <FeaturedRepos />
+        </div>
+        
+        {/* Footer spacer */}
+        <div className="h-20" />
       </main>
     </div>
   )
