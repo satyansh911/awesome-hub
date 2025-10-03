@@ -35,25 +35,16 @@ export function Header() {
         ? 'glass-strong border-b border-border/50 shadow-lg' 
         : 'bg-transparent'
     }`}>
-      <div className="container mx-auto px-4 lg:px-6">
+      <div className="container mx-auto px-4 lg:px-6 py-3">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link 
             href="/" 
             className="flex items-center gap-3 group"
           >
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity" />
-              <div className="relative p-2 bg-gradient-to-r from-primary to-accent rounded-xl">
-                <BookOpen className="w-5 h-5 text-white" />
-              </div>
-            </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-gradient">
+              <span className="text-xl font-bold text-gray-900">
                 AwesomeHub
-              </span>
-              <span className="text-xs text-muted-foreground -mt-1">
-                Curated Excellence
               </span>
             </div>
           </Link>

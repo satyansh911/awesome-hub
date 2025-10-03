@@ -142,7 +142,7 @@ export function SearchSection() {
                     onClick={handleSearch}
                     disabled={isSearching}
                     size="lg"
-                    className="w-full md:w-auto px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground transition-all duration-300 group"
+                    className="w-full md:w-auto px-8 transition-all duration-300 group"
                   >
                     {isSearching ? (
                       <>

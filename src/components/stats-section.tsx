@@ -172,7 +172,7 @@ export function StatsSection() {
             <Activity className="w-4 h-4" />
             Real-time Statistics
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-700 mb-4">
             Platform Insights
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -249,7 +249,7 @@ export function StatsSection() {
               <div className="p-3 bg-blue-500/10 rounded-xl w-fit mx-auto mb-4">
                 <Target className="w-6 h-6 text-blue-500" />
               </div>
-              <div className="text-xl font-bold text-gradient mb-2">98.5%</div>
+              <div className="text-xl font-bold text-gray-700 mb-2">98.5%</div>
               <div className="text-sm text-muted-foreground">Uptime</div>
             </CardContent>
           </Card>
@@ -259,7 +259,7 @@ export function StatsSection() {
               <div className="p-3 bg-green-500/10 rounded-xl w-fit mx-auto mb-4">
                 <TrendingUp className="w-6 h-6 text-green-500" />
               </div>
-              <div className="text-xl font-bold text-gradient mb-2">2.4M</div>
+              <div className="text-xl font-bold text-gray-700 mb-2">2.4M</div>
               <div className="text-sm text-muted-foreground">Monthly Views</div>
             </CardContent>
           </Card>
@@ -269,7 +269,7 @@ export function StatsSection() {
               <div className="p-3 bg-purple-500/10 rounded-xl w-fit mx-auto mb-4">
                 <GitFork className="w-6 h-6 text-purple-500" />
               </div>
-              <div className="text-xl font-bold text-gradient mb-2">156K</div>
+              <div className="text-xl font-bold text-gray-700 mb-2">156K</div>
               <div className="text-sm text-muted-foreground">Total Forks</div>
             </CardContent>
           </Card>
