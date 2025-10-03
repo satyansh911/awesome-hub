@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest'
 
 const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN,
+  auth: process.env.GITHUB_TOKEN, // Will work without token (lower rate limits)
 })
 
 export interface GitHubRepo {
@@ -78,8 +78,20 @@ export class GitHubService {
       })
       
       return response.data.items as GitHubRepo[]
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error searching GitHub repos:', error)
+      
+      // Handle rate limiting and auth errors gracefully
+      if (error && typeof error === 'object' && 'status' in error) {
+        const httpError = error as { status: number; message: string }
+        
+        if (httpError.status === 403 && httpError.message.includes('rate limit')) {
+          console.warn('GitHub API rate limit exceeded. Consider adding a GITHUB_TOKEN.')
+        } else if (httpError.status === 401) {
+          console.warn('GitHub API authentication failed. Check your GITHUB_TOKEN.')
+        }
+      }
+      
       return []
     }
   }
