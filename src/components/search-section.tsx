@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, Star } from 'lucide-react';
-import Link from 'next/link';
+import { Search, Filter } from 'lucide-react';
 import { Skeleton } from './skeleton';
 
 export function SearchSection() {
@@ -65,21 +64,14 @@ export function SearchSection() {
             </div>
           </div>
 
-          <div className='flex flex-col md:flex-row items-center justify-center gap-4 mt-6'>
+          <div className='flex justify-center mt-6'>
             <button
               onClick={handleSearch}
               disabled={isSearching}
-              className='w-full md:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium disabled:opacity-50'
+              className='px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium disabled:opacity-50'
             >
               {isSearching ? 'Searching...' : 'Search Awesome Repos'}
             </button>
-
-            <Link
-              href='/bookmarks'
-              className='inline-flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-700 hover:to-yellow-400 text-white font-medium rounded-lg shadow transition-all duration-200'
-            >
-              <Star className='w-4 h-4' /> Bookmarks
-            </Link>
           </div>
         </div>
 
