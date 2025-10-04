@@ -3,19 +3,19 @@
 import { useState, useEffect } from 'react';
 import { Star, GitFork, ExternalLink, Calendar } from 'lucide-react';
 import { useBookmarks } from '@/hooks/useBookmarks';
-import { Skeleton } from './skeleton';
+import { Skeleton } from './ui/skeleton';
 
 // GitHub API response format
 export interface Repository {
-  id: number;                 
+  id: number;
   name: string;
-  full_name: string;            
+  full_name: string;
   description: string | null;
-  html_url: string;             
-  stargazers_count: number;      
-  forks_count: number;          
+  html_url: string;
+  stargazers_count: number;
+  forks_count: number;
   language: string | null;
-  updated_at: string;           
+  updated_at: string;
   topics: string[];
   owner: {
     login: string;
@@ -41,7 +41,6 @@ export function FeaturedRepos() {
         setRepos(data);
       } catch (error) {
         console.error('Error fetching featured repos:', error);
-        // Fallback to empty array on error
         setRepos([]);
       } finally {
         setLoading(false);
@@ -63,7 +62,6 @@ export function FeaturedRepos() {
       day: 'numeric',
     });
   };
-
   if (loading) {
     return (
       <section className='mb-16'>
@@ -76,13 +74,25 @@ export function FeaturedRepos() {
               key={i}
               className='bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg'
             >
-              <Skeleton className='h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4' />
-              <Skeleton className='h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2' />
-              <Skeleton className='h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4' />
-              <Skeleton className='flex justify-between'>
-                <Skeleton className='h-3 bg-gray-200 dark:bg-gray-700 rounded w-16' />
-                <Skeleton className='h-3 bg-gray-200 dark:bg-gray-700 rounded w-16' />
-              </Skeleton>
+              <Skeleton className='h-5 w-3/4 mb-2' />
+              <Skeleton className='h-3 w-1/2 mb-4' />
+              <Skeleton className='h-3 w-full mb-2' />
+              <Skeleton className='h-3 w-5/6 mb-4' />
+              <div className='flex gap-2 mb-4'>
+                <Skeleton className='h-5 w-12 rounded-full' />
+                <Skeleton className='h-5 w-16 rounded-full' />
+                <Skeleton className='h-5 w-10 rounded-full' />
+              </div>
+              <div className='flex justify-between items-center'>
+                <div className='flex gap-4'>
+                  <Skeleton className='h-3 w-10' />
+                  <Skeleton className='h-3 w-10' />
+                </div>
+                <Skeleton className='h-3 w-12' />
+              </div>
+              <div className='mt-3 pt-3 border-t border-gray-200 dark:border-gray-700'>
+                <Skeleton className='h-3 w-20' />
+              </div>
             </div>
           ))}
         </div>
