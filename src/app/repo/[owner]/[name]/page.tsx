@@ -25,7 +25,7 @@ export default async function RepoDetailPage({ params }: { params: Promise<{ own
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <Header />
-      <main className="p-6 ">
+      <main className="p-6 mt-20 ">
         <RepoActionBar repo={repo} />
 
 
