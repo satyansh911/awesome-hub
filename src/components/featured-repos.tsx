@@ -1,29 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Star,
-  GitFork,
-  ExternalLink,
-  Calendar,
-  Clipboard,
-  ClipboardCheck,
-} from "lucide-react";
-import { useBookmarks } from "@/hooks/useBookmarks";
-import { Skeleton } from "./skeleton";
+import { useState, useEffect } from 'react';
+import { Star, GitFork, ExternalLink, Calendar,   Clipboard, ClipboardCheck, } from 'lucide-react';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { FeaturedReposSkeleton } from '@/components/skeletons/FeaturedReposSkeleton';
 import { toast } from "sonner";
 
 // GitHub API response format
 export interface Repository {
-  id: number;
+  id: number;                 
   name: string;
-  full_name: string;
+  full_name: string;            
   description: string | null;
-  html_url: string;
-  stargazers_count: number;
-  forks_count: number;
+  html_url: string;             
+  stargazers_count: number;      
+  forks_count: number;          
   language: string | null;
-  updated_at: string;
+  updated_at: string;           
   topics: string[];
   owner: {
     login: string;
@@ -49,8 +42,7 @@ export function FeaturedRepos() {
         const data = await response.json();
         setRepos(data);
       } catch (error) {
-        console.error("Error fetching featured repos:", error);
-        // Fallback to empty array on error
+        console.error('Error fetching featured repos:', error);
         setRepos([]);
       } finally {
         setLoading(false);
@@ -83,29 +75,7 @@ export function FeaturedRepos() {
   };
 
   if (loading) {
-    return (
-      <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Featured Repositories
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-            >
-              <Skeleton className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
-              <Skeleton className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
-              <Skeleton className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
-              <Skeleton className="flex justify-between">
-                <Skeleton className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16" />
-                <Skeleton className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16" />
-              </Skeleton>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
+    return <FeaturedReposSkeleton />;
   }
 
   return (
