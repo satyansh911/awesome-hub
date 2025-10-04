@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Star, GitFork, ExternalLink, Calendar } from 'lucide-react';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { FeaturedReposSkeleton } from '@/components/skeletons/FeaturedReposSkeleton';
+import Link from 'next/link';
 
 // GitHub API response format
 export interface Repository {

@@ -256,10 +256,10 @@
 .markdown p { @apply leading-relaxed; }
 
 /* Blockquotes */
-.markdown blockquote { @apply bg-gray-800 border-l-4 border-blue-500 px-4 py-3 my-4; }
+.markdown blockquote { @apply bg-gray-300 border-l-4 border-blue-500 px-4 py-3 my-4; }
 
 /* Code blocks */
-.markdown pre { @apply bg-gray-800 text-gray-200 p-6 rounded-md overflow-x-auto; }
+.markdown pre { @apply bg-gray-300 text-gray-200 p-6 rounded-md overflow-x-auto; }
 
 /* Horizontal rules */
 .markdown hr { @apply border-t-2 border-gray-300 my-8; }

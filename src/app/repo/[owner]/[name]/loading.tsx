@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 import { Header } from '@/components/header';
 
 export default function RepoDetailLoading() {
