@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Sparkles, Hash, Zap, Globe, Code, Database, Shield, Server } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,40 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Command as CommandPrimitive, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { SearchResults } from './search-results';
-import { GitHubService, type GitHubRepo, type SearchFilters } from '@/lib/github';
 
-// Repository type based on GitHub API response
-type Repository = {
-  id: number;
-  name: string;
-  fullName: string;
-  description: string | null;
-  url: string;
-  stars: number;
-  forks: number;
-  language: string | null;
-  topics: string[];
-  owner: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-// Transform GitHub repo to our Repository type
-const transformGitHubRepo = (repo: GitHubRepo): Repository => ({
-  id: repo.id,
-  name: repo.name,
-  fullName: repo.full_name,
-  description: repo.description,
-  url: repo.html_url,
-  stars: repo.stargazers_count,
-  forks: repo.forks_count,
-  language: repo.language,
-  topics: repo.topics || [],
-  owner: repo.owner.login,
-  createdAt: repo.created_at,
-  updatedAt: repo.updated_at,
-});
 
 const categories = [
   { value: 'all', label: 'All Categories', icon: Globe, color: 'from-blue-500 to-purple-500' },
@@ -63,107 +31,41 @@ const trendingSearches = [
 ];
 
 export function SearchSection() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchResults, setSearchResults] = useState<Repository[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const searchRepositories = useCallback(async (query: string, category: string, page: number = 1, append: boolean = false) => {
-
-    try {
-      if (page === 1) {
-        setIsSearching(true);
-        setError(null);
-      } else {
-        setIsLoadingMore(true);
-      }
-
-      // Validate search input
-      if (!query.trim() && category === 'all') {
-        setError('Please enter a search term or select a category');
-        return;
-      }
-
-      // Build search filters for GitHub service
-      const filters: SearchFilters = {
-        query: query.trim() || 'awesome',
-      };
-
-      // Handle category mapping to topic
-      if (category && category !== 'all') {
-        const categoryTopicMap: Record<string, string> = {
-          'javascript': 'javascript',
-          'python': 'python',
-          'react': 'react',
-          'machine-learning': 'machine-learning',
-          'security': 'security',
-          'devops': 'devops',
-          'css': 'css',
-          'go': 'go',
-          'rust': 'rust'
-        };
-        
-        if (categoryTopicMap[category]) {
-          filters.topic = categoryTopicMap[category];
-        }
-      }
-
-      // Call GitHub service directly
-      const repos = await GitHubService.searchAwesomeRepos(filters, page);
-      
-      // Transform GitHub repos to our Repository type
-      const transformedRepos = repos.map(transformGitHubRepo);
-
-      if (append && page > 1) {
-        setSearchResults((prev: Repository[]) => [...prev, ...transformedRepos]);
-      } else {
-        setSearchResults(transformedRepos);
-      }
-
-      setCurrentPage(page);
-      setHasMore(repos.length === 50); // GitHub returns 50 per page
-      setHasSearched(true);
-      setError(null);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to search repositories';
-      setError(errorMessage);
-      console.error('Search error:', err);
-    } finally {
-      setIsSearching(false);
-      setIsLoadingMore(false);
+  const navigateToSearch = useCallback(() => {
+    if (!searchQuery.trim() && selectedCategory === 'all') {
+      setError('Please enter a search term or select a category');
+      return;
     }
-  }, []);
 
-  // Debounced search
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchQuery.trim() || selectedCategory !== 'all') {
-        setCurrentPage(1);
-        searchRepositories(searchQuery, selectedCategory, 1, false);
-      }
-    }, 500); // 500ms debounce
+    setError(null);
+    
+    // Build search params
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) {
+      params.set('q', searchQuery.trim());
+    }
+    if (selectedCategory !== 'all') {
+      params.set('category', selectedCategory);
+    }
+    
+    // Navigate to search page
+    router.push(`/search?${params.toString()}`);
+  }, [router, searchQuery, selectedCategory]);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedCategory, searchRepositories]);
+
 
   const handleSearch = useCallback(() => {
-    setCurrentPage(1);
-    searchRepositories(searchQuery, selectedCategory, 1, false);
-  }, [searchQuery, selectedCategory, searchRepositories]);
+    navigateToSearch();
+  }, [navigateToSearch]);
 
-  const handleLoadMore = useCallback(() => {
-    if (hasMore && !isLoadingMore) {
-      const nextPage = currentPage + 1;
-      searchRepositories(searchQuery, selectedCategory, nextPage, true);
-    }
-  }, [hasMore, isLoadingMore, currentPage, searchQuery, selectedCategory, searchRepositories]);
+
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -270,21 +172,11 @@ export function SearchSection() {
                     <label className="block text-sm font-medium text-muted-foreground mb-2 md:invisible">Action</label>
                     <Button 
                       onClick={handleSearch}
-                      disabled={isSearching}
                       size="lg"
                       className="w-full md:w-auto px-8 transition-all duration-300 group"
                     >
-                      {isSearching ? (
-                        <>
-                          <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2" />
-                          Searching...
-                        </>
-                      ) : (
-                        <>
-                          <Zap className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                          Search
-                        </>
-                      )}
+                      <Zap className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                      Search
                     </Button>
                   </div>
                 </div>
@@ -356,18 +248,7 @@ export function SearchSection() {
         </div>
       </section>
 
-      {/* Search Results */}
-      {hasSearched && (
-        <SearchResults 
-          results={searchResults}
-          isLoading={isSearching}
-          hasMore={hasMore}
-          isLoadingMore={isLoadingMore}
-          onLoadMore={handleLoadMore}
-          searchQuery={searchQuery}
-          category={selectedCategory}
-        />
-      )}
+
     </>
   );
 }
