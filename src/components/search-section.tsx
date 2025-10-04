@@ -82,13 +82,13 @@ export function SearchSection() {
 
   return (
     <>
-      <section className="relative py-16 px-6">
+      <section className="relative pb-16 px-6">
         {/* Background gradient */}
         <div className="absolute inset-0 gradient-mesh opacity-30" />
         
         <div className="relative max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
+          {/* <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" />
               Discover • Explore • Create
@@ -99,7 +99,7 @@ export function SearchSection() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Search through thousands of curated awesome lists and discover resources that will supercharge your development journey.
             </p>
-          </div>
+          </div> */}
 
           {/* Search Interface */}
           <Card className="glass-strong border-0 p-8 mb-8">
