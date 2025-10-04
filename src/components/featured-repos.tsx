@@ -7,6 +7,7 @@ import { FeaturedReposSkeleton } from '@/components/skeletons/FeaturedReposSkele
 import { toast } from "sonner";
 import Link from 'next/link';
 
+
 // GitHub API response format
 export interface Repository {
   id: number;                 
@@ -74,7 +75,7 @@ export function FeaturedRepos() {
       setCopiedRepoId((current) => (current === repo.id ? null : current));
     }, 800);
   };
-  console.log(repos)
+
 
   if (loading) {
     return <FeaturedReposSkeleton />;
@@ -93,6 +94,7 @@ export function FeaturedRepos() {
           >
             <div className="flex items-start justify-between gap-2 mb-4">
               <Link href={`/repo/${repo.owner.login}/${repo.name}`}>
+
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   {repo.name}
@@ -102,6 +104,23 @@ export function FeaturedRepos() {
                 </p>
               </div>
               </Link>
+              <button
+                aria-label="Copy repository URL"
+                onClick={() => handleCopyURL(repo)}
+                className=" text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+              >
+                {copiedRepoId === repo.id ? (
+                  <ClipboardCheck
+                    aria-label="Copied"
+                    className="size-5 text-green-500 transition-transform duration-200 scale-110"
+                  />
+                ) : (
+                  <Clipboard
+                    aria-label="Copy repository URL"
+                    className="size-5"
+                  />
+                )}
+              </button>
               <button
                 aria-label="Copy repository URL"
                 onClick={() => handleCopyURL(repo)}
