@@ -4,7 +4,6 @@ import { Star, GitFork, ExternalLink, Calendar, Loader2, Package } from 'lucide-
 
 interface Repository {
   id: number
-  githubId: number
   name: string
   fullName: string
   description: string | null
@@ -13,9 +12,7 @@ interface Repository {
   forks: number
   language: string | null
   topics: string[]
-  tags: string[]
   owner: string
-  lastFetched: string
   createdAt: string
   updatedAt: string
 }
@@ -194,7 +191,7 @@ export function SearchResults({
                   </p>
                   
                   <div className="flex flex-wrap gap-1 mb-4 min-h-[2rem]">
-                    {(repo.topics || []).slice(0, 3).map((topic) => (
+                    {(repo.topics || []).slice(0, 5).map((topic) => (
                       <span
                         key={topic}
                         className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
@@ -202,17 +199,9 @@ export function SearchResults({
                         {topic}
                       </span>
                     ))}
-                    {(repo.tags || []).slice(0, 2).map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                    {((repo.topics?.length || 0) > 3 || (repo.tags?.length || 0) > 2) && (
+                    {(repo.topics?.length || 0) > 5 && (
                       <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
-                        +{Math.max(0, (repo.topics?.length || 0) + (repo.tags?.length || 0) - 5)}
+                        +{(repo.topics?.length || 0) - 5}
                       </span>
                     )}
                   </div>

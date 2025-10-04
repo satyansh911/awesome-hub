@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Search, Sparkles, Hash, Zap, Globe, Code, Database, Shield, Server } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,9 +9,40 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Command as CommandPrimitive, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
 import { SearchResults } from './search-results';
-import { SearchApiClient, type Repository } from '@/lib/search-api';
+import { GitHubService, type GitHubRepo, type SearchFilters } from '@/lib/github';
+
+// Repository type based on GitHub API response
+type Repository = {
+  id: number;
+  name: string;
+  fullName: string;
+  description: string | null;
+  url: string;
+  stars: number;
+  forks: number;
+  language: string | null;
+  topics: string[];
+  owner: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// Transform GitHub repo to our Repository type
+const transformGitHubRepo = (repo: GitHubRepo): Repository => ({
+  id: repo.id,
+  name: repo.name,
+  fullName: repo.full_name,
+  description: repo.description,
+  url: repo.html_url,
+  stars: repo.stargazers_count,
+  forks: repo.forks_count,
+  language: repo.language,
+  topics: repo.topics || [],
+  owner: repo.owner.login,
+  createdAt: repo.created_at,
+  updatedAt: repo.updated_at,
+});
 
 const categories = [
   { value: 'all', label: 'All Categories', icon: Globe, color: 'from-blue-500 to-purple-500' },
@@ -44,16 +75,7 @@ export function SearchSection() {
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const abortControllerRef = useRef<AbortController | null>(null);
-
   const searchRepositories = useCallback(async (query: string, category: string, page: number = 1, append: boolean = false) => {
-    // Cancel previous request if it exists
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Create new AbortController for this request
-    abortControllerRef.current = new AbortController();
 
     try {
       if (page === 1) {
@@ -69,31 +91,47 @@ export function SearchSection() {
         return;
       }
 
-      const data = await SearchApiClient.searchRepositories(
-        {
-          query: query.trim() || 'awesome',
-          category: category !== 'all' ? category : undefined,
-          page,
-        },
-        abortControllerRef.current.signal
-      );
+      // Build search filters for GitHub service
+      const filters: SearchFilters = {
+        query: query.trim() || 'awesome',
+      };
 
-      if (append && page > 1) {
-        setSearchResults((prev: Repository[]) => [...prev, ...data.repos]);
-      } else {
-        setSearchResults(data.repos);
+      // Handle category mapping to topic
+      if (category && category !== 'all') {
+        const categoryTopicMap: Record<string, string> = {
+          'javascript': 'javascript',
+          'python': 'python',
+          'react': 'react',
+          'machine-learning': 'machine-learning',
+          'security': 'security',
+          'devops': 'devops',
+          'css': 'css',
+          'go': 'go',
+          'rust': 'rust'
+        };
+        
+        if (categoryTopicMap[category]) {
+          filters.topic = categoryTopicMap[category];
+        }
       }
 
-      setCurrentPage(data.pagination.page);
-      setHasMore(data.pagination.hasMore);
+      // Call GitHub service directly
+      const repos = await GitHubService.searchAwesomeRepos(filters, page);
+      
+      // Transform GitHub repos to our Repository type
+      const transformedRepos = repos.map(transformGitHubRepo);
+
+      if (append && page > 1) {
+        setSearchResults((prev: Repository[]) => [...prev, ...transformedRepos]);
+      } else {
+        setSearchResults(transformedRepos);
+      }
+
+      setCurrentPage(page);
+      setHasMore(repos.length === 50); // GitHub returns 50 per page
       setHasSearched(true);
       setError(null);
     } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') {
-        // Request was cancelled, don't update state
-        return;
-      }
-      
       const errorMessage = err instanceof Error ? err.message : 'Failed to search repositories';
       setError(errorMessage);
       console.error('Search error:', err);
