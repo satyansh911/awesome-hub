@@ -37,3 +37,22 @@ export function generateSlug(text: string): string {
     .replace(/[^\w ]+/g, '')
     .replace(/ +/g, '-')
 }
+
+// --- Helper Functions (can be moved to a utilities file if preferred) ---
+
+export function getLanguageColor(language: string): string {
+  switch (language.toLowerCase()) {
+    case 'typescript': return '#3178c6';
+    case 'javascript': return '#f1e05a';
+    case 'python': return '#3572A5';
+    case 'java': return '#b07219';
+    case 'go': return '#00ADD8';
+    case 'rust': return '#dea584';
+    case 'c#': return '#178600';
+    case 'php': return '#4F5D95';
+    case 'ruby': return '#701516';
+    case 'html': return '#e34c26';
+    case 'css': return '#563d7c';
+    default: return '#cccccc'; // Default grey for unknown languages
+  }
+}

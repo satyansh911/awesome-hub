@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Star, GitFork, ExternalLink, Calendar } from 'lucide-react';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { Skeleton } from './skeleton';
+import Link from 'next/link';
 
 // GitHub API response format
 export interface Repository {
@@ -16,6 +17,7 @@ export interface Repository {
   forks_count: number;          
   language: string | null;
   updated_at: string;           
+  created_at: string;           
   topics: string[];
   owner: {
     login: string;
@@ -103,9 +105,11 @@ export function FeaturedRepos() {
           >
             <div className='flex items-start justify-between mb-4'>
               <div className='flex-1'>
+                  <Link href={`/repo/${repo.owner.login}/${repo.name}`}>
                 <h3 className='text-lg font-semibold text-gray-900 dark:text-white mb-1'>
                   {repo.name}
                 </h3>
+                </Link>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
                   {repo.full_name}
                 </p>
