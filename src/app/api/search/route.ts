@@ -12,6 +12,14 @@ export async function GET(request: Request) {
   const minStars = searchParams.get('minStars')
   const category = searchParams.get('category')
 
+  // Validate page parameter
+  if (page < 1 || page > 100) {
+    return NextResponse.json(
+      { error: 'Page must be between 1 and 100' },
+      { status: 400 }
+    )
+  }
+
   try {
     // Build cache key from search parameters
     const cacheKey = `search-${JSON.stringify({
@@ -27,8 +35,26 @@ export async function GET(request: Request) {
           ...(language && { language }),
           ...(topic && { topic }),
           ...(sort && { sort }),
-          ...(minStars && { minStars: parseInt(minStars) }),
-          ...(category && category !== 'all' && { category })
+          ...(minStars && { minStars: parseInt(minStars) })
+        }
+
+        // Handle category mapping to topic for now
+        if (category && category !== 'all') {
+          const categoryTopicMap: Record<string, string> = {
+            'javascript': 'javascript',
+            'python': 'python',
+            'react': 'react',
+            'machine-learning': 'machine-learning',
+            'security': 'security',
+            'devops': 'devops',
+            'css': 'css',
+            'go': 'go',
+            'rust': 'rust'
+          }
+          
+          if (categoryTopicMap[category]) {
+            filters.topic = categoryTopicMap[category]
+          }
         }
 
         return await GitHubService.searchAwesomeRepos(filters, page)
@@ -36,8 +62,27 @@ export async function GET(request: Request) {
       15 // 15 minutes cache for search results
     )
 
+    // Transform GitHub repos to match expected interface
+    const transformedRepos = repos.map(repo => ({
+      id: repo.id,
+      githubId: repo.id,
+      name: repo.name,
+      fullName: repo.full_name,
+      description: repo.description,
+      url: repo.html_url,
+      stars: repo.stargazers_count,
+      forks: repo.forks_count,
+      language: repo.language,
+      topics: repo.topics || [],
+      tags: [], // GitHub doesn't have tags, using empty array
+      owner: repo.owner.login,
+      lastFetched: new Date().toISOString(),
+      createdAt: repo.created_at,
+      updatedAt: repo.updated_at
+    }))
+
     return NextResponse.json({
-      repos,
+      repos: transformedRepos,
       pagination: {
         page,
         hasMore: repos.length === 50, // GitHub returns 50 per page

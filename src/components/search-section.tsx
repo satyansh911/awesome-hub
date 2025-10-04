@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Search, Sparkles, Hash, Zap, Globe, Code, Database, Shield, Server } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -63,9 +63,15 @@ export function SearchSection() {
         setIsLoadingMore(true);
       }
 
+      // Validate search input
+      if (!query.trim() && category === 'all') {
+        setError('Please enter a search term or select a category');
+        return;
+      }
+
       const data = await SearchApiClient.searchRepositories(
         {
-          query: query || 'awesome',
+          query: query.trim() || 'awesome',
           category: category !== 'all' ? category : undefined,
           page,
         },
@@ -97,12 +103,19 @@ export function SearchSection() {
     }
   }, []);
 
+  // Debounced search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.trim() || selectedCategory !== 'all') {
+        setCurrentPage(1);
+        searchRepositories(searchQuery, selectedCategory, 1, false);
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, selectedCategory, searchRepositories]);
+
   const handleSearch = useCallback(() => {
-    if (searchQuery.trim() === '' && selectedCategory === 'all') {
-      setError('Please enter a search term or select a category');
-      return;
-    }
-    
     setCurrentPage(1);
     searchRepositories(searchQuery, selectedCategory, 1, false);
   }, [searchQuery, selectedCategory, searchRepositories]);

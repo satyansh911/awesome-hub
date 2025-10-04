@@ -1,5 +1,3 @@
-// API client utilities for search functionality
-
 export interface Repository {
   id: number
   githubId: number
@@ -38,41 +36,53 @@ export class SearchApiClient {
   static async searchRepositories(params: SearchParams, signal?: AbortSignal): Promise<SearchResponse> {
     const searchParams = new URLSearchParams()
     
-    if (params.query) {
-      searchParams.append('q', params.query)
+    if (params.query?.trim()) {
+      searchParams.append('q', params.query.trim())
     }
     
     if (params.category && params.category !== 'all') {
       searchParams.append('category', params.category)
     }
     
-    if (params.page) {
+    if (params.page && params.page > 0) {
       searchParams.append('page', params.page.toString())
     }
 
     const url = `${this.baseUrl}?${searchParams.toString()}`
     
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal,
-    })
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal,
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      
+      // Validate response structure
+      if (!data.repos || !Array.isArray(data.repos)) {
+        throw new Error('Invalid response format')
+      }
+
+      return data
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw error // Re-throw abort errors
+      }
+      
+      // Handle network errors
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Network error. Please check your connection.')
+      }
+      
+      throw error
     }
-
-    return response.json()
-  }
-}
-
-// Hook for managing search state
-export function useSearchState() {
-  return {
-    // This will be implemented if we add React hooks for state management
-    // For now, we're using useState directly in components
   }
 }
