@@ -37,30 +37,32 @@ export function SearchSection() {
   const [isFocused, setIsFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const navigateToSearch = useCallback(() => {
-    if (!searchQuery.trim() && selectedCategory === 'all') {
-      setError('Please enter a search term or select a category');
-      return;
-    }
+  const navigateToSearch = useCallback(
+    (category?: string) => {
+      setError(null);
 
-    setError(null);
+      if (!searchQuery.trim() && (category ?? selectedCategory) === 'all') {
+        setError('Please enter a search term or select a category');
+        return;
+      }
 
-    // Build search params
-    const params = new URLSearchParams();
-    if (searchQuery.trim()) {
-      params.set('q', searchQuery.trim());
-    }
-    if (selectedCategory !== 'all') {
-      params.set('category', selectedCategory);
-    }
+      // Build search params
+      const params = new URLSearchParams();
+      if (searchQuery.trim()) {
+        params.set('q', searchQuery.trim());
+      }
+      if ((category ?? selectedCategory) !== 'all') {
+        params.set('category', category ?? selectedCategory);
+      }
 
-    // Navigate to search page
-    router.push(`/search?${params.toString()}`);
-  }, [router, searchQuery, selectedCategory]);
+      // Navigate to search page
+      router.push(`/search?${params.toString()}`);
+    }, [router, searchQuery, selectedCategory]);
 
-  const handleSearch = useCallback(() => {
-    navigateToSearch();
-  }, [navigateToSearch]);
+  const handleSearch = useCallback(
+    (category?: string) => {
+      navigateToSearch(category);
+    }, [navigateToSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -134,7 +136,13 @@ export function SearchSection() {
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-muted-foreground mb-2">Category</label>
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={(value) => {
+                      setSelectedCategory(value);
+                      handleSearch(value);
+                    }}
+                  >
                     <SelectTrigger className="w-full bg-background/50 border-border/50">
                       <div className="flex items-center gap-2">
                         <SelectValue />
@@ -157,7 +165,7 @@ export function SearchSection() {
                 <div className="md:w-auto">
                   <label className="block text-sm font-medium text-muted-foreground mb-2 md:invisible">Action</label>
                   <Button
-                    onClick={handleSearch}
+                    onClick={() => handleSearch()}
                     size="lg"
                     className="w-full md:w-auto px-8 transition-all duration-300 group"
                   >

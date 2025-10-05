@@ -26,7 +26,7 @@ const categories = [
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
@@ -37,7 +37,7 @@ export default function SearchPage() {
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const searchRepositories = async (query: string, category: string, page: number = 1, append: boolean = false) => {
+  const searchRepositories = async (query?: string, category?: string, page: number = 1, append: boolean = false) => {
     try {
       if (page === 1) {
         setIsSearching(true);
@@ -46,29 +46,26 @@ export default function SearchPage() {
         setIsLoadingMore(true);
       }
 
-      if (!query.trim() && category === 'all') {
-        setError('Please enter a search term or select a category');
-        return;
-      }
+      const q = (query ?? '').trim();
 
       const filters: SearchFilters = {
-        query: query.trim() || 'awesome',
+        query: q || 'awesome',
       };
 
       // Category mapping
       if (category && category !== 'all') {
         const categoryTopicMap: Record<string, string> = {
-          'javascript': 'javascript',
-          'python': 'python',
-          'react': 'react',
+          javascript: 'javascript',
+          python: 'python',
+          react: 'react',
           'machine-learning': 'machine-learning',
-          'security': 'security',
-          'devops': 'devops',
-          'css': 'css',
-          'go': 'go',
-          'rust': 'rust'
+          security: 'security',
+          devops: 'devops',
+          css: 'css',
+          go: 'go',
+          rust: 'rust',
         };
-        
+
         if (categoryTopicMap[category]) {
           filters.topic = categoryTopicMap[category];
         }
@@ -106,11 +103,27 @@ export default function SearchPage() {
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('q', searchQuery.trim());
     if (selectedCategory !== 'all') params.set('category', selectedCategory);
-    
+
     router.replace(`/search?${params.toString()}`);
-    
     setCurrentPage(1);
-    searchRepositories(searchQuery, selectedCategory, 1, false);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+
+    // Update URL params to reflect the new category
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set('q', searchQuery.trim());
+    if (category !== 'all') params.set('category', category);
+
+    router.replace(`/search?${params.toString()}`);
+    setCurrentPage(1);
+
+    // When both query is empty and category is 'all', clear results immediately.
+    if (!searchQuery.trim() && category === 'all') {
+      setSearchResults([]);
+      setHasSearched(false);
+    }
   };
 
   const handleLoadMore = () => {
@@ -131,9 +144,12 @@ export default function SearchPage() {
   useEffect(() => {
     const query = searchParams.get('q');
     const category = searchParams.get('category') || 'all';
-    
-    if (query) {
-      searchRepositories(query, category);
+
+    setSearchQuery(query || '');
+    setSelectedCategory(category);
+
+    if (query || category !== 'all') {
+      searchRepositories(query || '', category);
     }
   }, [searchParams]);
 
@@ -142,11 +158,7 @@ export default function SearchPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.push('/')}
-            className="mb-4"
-          >
+          <Button variant="ghost" onClick={() => router.push('/')} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
@@ -157,9 +169,9 @@ export default function SearchPage() {
           {/* Search Sidebar */}
           <div className="lg:col-span-1">
             <Card className="sticky top-8">
-              <CardContent className="p-6">
+              <CardContent className="px-6">
                 <h2 className="text-lg font-semibold mb-4">Search</h2>
-                
+
                 <div className="space-y-4">
                   {/* Search Input */}
                   <div className="relative">
@@ -177,8 +189,8 @@ export default function SearchPage() {
                   {/* Category Filter */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Category</label>
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger>
+                    <Select value={selectedCategory} onValueChange={(value) => handleCategoryChange(value)}>
+                      <SelectTrigger className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -192,11 +204,7 @@ export default function SearchPage() {
                   </div>
 
                   {/* Search Button */}
-                  <Button 
-                    onClick={handleSearch}
-                    disabled={isSearching}
-                    className="w-full"
-                  >
+                  <Button onClick={handleSearch} disabled={isSearching} className="w-full">
                     {isSearching ? 'Searching...' : 'Search'}
                   </Button>
 
@@ -214,7 +222,7 @@ export default function SearchPage() {
           {/* Results */}
           <div className="lg:col-span-3">
             {hasSearched ? (
-              <SearchResults 
+              <SearchResults
                 results={searchResults}
                 isLoading={isSearching}
                 hasMore={hasMore}
