@@ -2,28 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { Star, GitFork, ExternalLink, Calendar, Clipboard, ClipboardCheck } from "lucide-react";
+import { GitHubRepo as Repository } from "@/lib/github";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { FeaturedReposSkeleton } from "@/components/skeletons/FeaturedReposSkeleton";
 import { toast } from "sonner";
-
-// GitHub API response format
-export interface Repository {
-	id: number;
-	name: string;
-	full_name: string;
-	description: string | null;
-	html_url: string;
-	stargazers_count: number;
-	forks_count: number;
-	language: string | null;
-	updated_at: string;
-	topics: string[];
-	owner: {
-		login: string;
-		avatar_url: string;
-	};
-}
 
 export function FeaturedRepos() {
 	const [repos, setRepos] = useState<Repository[]>([]);

@@ -2,7 +2,7 @@
 
 import { Star, GitFork, ExternalLink, Calendar, Loader2, Package } from 'lucide-react';
 import { formatNumber, formatDate } from '@/lib/utils';
-import { Repository } from '@/components/featured-repos';
+import { GitHubRepo as Repository } from '@/lib/github';
 
 interface SearchResultsProps {
   results: Repository[];

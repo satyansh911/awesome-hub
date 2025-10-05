@@ -10,36 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { SearchResults } from '@/components/search-results';
 import { GitHubService, type GitHubRepo, type SearchFilters } from '@/lib/github';
 
-type Repository = {
-  id: number;
-  name: string;
-  fullName: string;
-  description: string | null;
-  url: string;
-  stars: number;
-  forks: number;
-  language: string | null;
-  topics: string[];
-  owner: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-const transformGitHubRepo = (repo: GitHubRepo): Repository => ({
-  id: repo.id,
-  name: repo.name,
-  fullName: repo.full_name,
-  description: repo.description,
-  url: repo.html_url,
-  stars: repo.stargazers_count,
-  forks: repo.forks_count,
-  language: repo.language,
-  topics: repo.topics || [],
-  owner: repo.owner.login,
-  createdAt: repo.created_at,
-  updatedAt: repo.updated_at,
-});
-
 const categories = [
   { value: 'all', label: 'All Categories' },
   { value: 'javascript', label: 'JavaScript' },
@@ -59,7 +29,7 @@ export default function SearchPage() {
   
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
-  const [searchResults, setSearchResults] = useState<Repository[]>([]);
+  const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -104,13 +74,12 @@ export default function SearchPage() {
         }
       }
 
-      const repos = await GitHubService.searchAwesomeRepos(filters, page);
-      const transformedRepos = repos.map(transformGitHubRepo);
+      const repos: GitHubRepo[] = await GitHubService.searchAwesomeRepos(filters, page);
 
       if (append && page > 1) {
-        setSearchResults(prev => [...prev, ...transformedRepos]);
+        setSearchResults((prev) => [...prev, ...repos]);
       } else {
-        setSearchResults(transformedRepos);
+        setSearchResults(repos);
       }
 
       setCurrentPage(page);

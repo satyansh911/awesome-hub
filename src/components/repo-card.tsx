@@ -1,6 +1,7 @@
 'use client'
 
 import { Star, GitFork, ExternalLink, Calendar, TrendingUp, Bookmark, BookmarkCheck } from 'lucide-react'
+import { GitHubRepo as Repository } from '@/lib/github';
 import { formatNumber, formatDate } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -8,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useBookmarks } from '@/hooks/useBookmarks'
-import { Repository } from './featured-repos'
 import { useState } from 'react'
 
 interface RepoCardProps {
