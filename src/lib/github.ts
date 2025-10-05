@@ -1,5 +1,4 @@
 import { Octokit } from '@octokit/rest'
-import { RedirectType } from 'next/navigation'
 
 
 const octokit = new Octokit({
@@ -227,7 +226,7 @@ export class GitHubService {
         return Buffer.from(content, 'base64').toString('utf-8')
       }
       return null
-    } catch (error) {
+    } catch {
       console.warn(`No README found for ${owner}/${repo}`)
       return null
     }
@@ -243,8 +242,8 @@ export class GitHubService {
       // Pick first topic to suggest related repos
       const mainTopic = repoData.topics[0]
       return await this.searchAwesomeReposByTopic(mainTopic)
-    } catch (error) {
-      console.error('Error fetching related repos:', error)
+    } catch {
+      console.error('Error fetching related repos')
       return []
     }
   }

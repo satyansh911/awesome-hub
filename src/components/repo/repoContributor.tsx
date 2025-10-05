@@ -12,22 +12,18 @@ interface Props {
 
 export default function RepoContributors({ owner, name }: Props) {
   const [contributors, setContributors] = useState<GitHubContributor[]>([])
-  const [loading, setLoading] = useState(false)
-
   const DISPLAY_TOTAL_COUNT = 606
   const MAX_AVATARS_DISPLAY = 14
 
   useEffect(() => {
     const loadContributors = async () => {
       if (contributors.length === 0) {
-        setLoading(true)
         const initialData = await GitHubService.getRepoContributors(owner, name, 1, MAX_AVATARS_DISPLAY)
         setContributors(initialData)
-        setLoading(false)
       }
     }
     loadContributors()
-  }, [owner, name])
+  }, [owner, name, contributors.length])
 
   const remainingContributors = DISPLAY_TOTAL_COUNT - contributors.length
 

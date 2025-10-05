@@ -109,6 +109,7 @@ function SearchPageContent() {
 
 		router.replace(`/search?${params.toString()}`);
 		setCurrentPage(1);
+		searchRepositories(searchQuery, selectedCategory, 1, false);
 	};
 
 	const handleLoadMore = () => {
