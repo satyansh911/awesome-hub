@@ -138,10 +138,7 @@ export function SearchSection() {
                   <label className="block text-sm font-medium text-muted-foreground mb-2">Category</label>
                   <Select
                     value={selectedCategory}
-                    onValueChange={(value) => {
-                      setSelectedCategory(value);
-                      handleSearch(value);
-                    }}
+                    onValueChange={setSelectedCategory}
                   >
                     <SelectTrigger className="w-full bg-background/50 border-border/50">
                       <div className="flex items-center gap-2">

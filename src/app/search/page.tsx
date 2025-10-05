@@ -108,9 +108,7 @@ function SearchPageContent() {
 		if (selectedCategory !== "all") params.set("category", selectedCategory);
 
 		router.replace(`/search?${params.toString()}`);
-
 		setCurrentPage(1);
-		searchRepositories(searchQuery, selectedCategory, 1, false);
 	};
 
 	const handleLoadMore = () => {
@@ -132,8 +130,11 @@ function SearchPageContent() {
 		const query = searchParams.get("q");
 		const category = searchParams.get("category") || "all";
 
-		if (query) {
-			searchRepositories(query, category);
+		setSearchQuery(query || "");
+		setSelectedCategory(category);
+
+		if (query || category !== "all") {
+			searchRepositories(query || "", category);
 		}
 	}, [searchParams]);
 
@@ -174,7 +175,7 @@ function SearchPageContent() {
 									<div>
 										<label className="block text-sm font-medium mb-2">Category</label>
 										<Select value={selectedCategory} onValueChange={setSelectedCategory}>
-											<SelectTrigger>
+											<SelectTrigger className="w-full bg-background/50 border-border/50">
 												<SelectValue />
 											</SelectTrigger>
 											<SelectContent>
