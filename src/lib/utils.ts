@@ -5,12 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatNumber(num: number) {
-  if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`;
-  if (num >= 1e3) return `${(num / 1e3).toFixed(1)}K`;
-  return num.toString();
-}
-
 export function formatDate(dateString: string, options?: Intl.DateTimeFormatOptions) {
   return new Date(dateString).toLocaleDateString("en-US", options);
 }
@@ -22,15 +16,6 @@ export function formatNumber(num: number): string {
     return (num / 1000).toFixed(1) + 'K'
   }
   return num.toString()
-}
-
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
 }
 
 export function extractAwesomeCategory(repoName: string): string {
@@ -47,8 +32,6 @@ export function generateSlug(text: string): string {
     .replace(/[^\w ]+/g, '')
     .replace(/ +/g, '-')
 }
-
-// --- Helper Functions (can be moved to a utilities file if preferred) ---
 
 export function getLanguageColor(language: string): string {
   switch (language.toLowerCase()) {
