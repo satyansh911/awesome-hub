@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Search, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -53,7 +53,7 @@ const categories = [
   { value: 'rust', label: 'Rust' },
 ];
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -267,5 +267,38 @@ export default function SearchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function SearchPageFallback() {
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="mb-8">
+          <div className="w-20 h-4 bg-muted animate-pulse rounded mb-4" />
+          <div className="w-40 h-8 bg-muted animate-pulse rounded" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-1">
+            <div className="w-full h-80 bg-muted animate-pulse rounded" />
+          </div>
+          <div className="lg:col-span-3">
+            <div className="text-center py-12">
+              <div className="w-12 h-12 bg-muted animate-pulse rounded mx-auto mb-4" />
+              <div className="w-32 h-6 bg-muted animate-pulse rounded mx-auto mb-2" />
+              <div className="w-64 h-4 bg-muted animate-pulse rounded mx-auto" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<SearchPageFallback />}>
+      <SearchPageContent />
+    </Suspense>
   );
 }
