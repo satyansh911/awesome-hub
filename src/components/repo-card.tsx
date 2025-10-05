@@ -1,14 +1,14 @@
-'use client'
+"use client"
 
-import { Star, GitFork, ExternalLink, Calendar, TrendingUp, Bookmark, BookmarkCheck } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useBookmarks } from '@/hooks/useBookmarks'
-import { Repository } from './featured-repos'
-import { useState } from 'react'
+import { Star, GitFork, ExternalLink, Calendar, TrendingUp, Bookmark, BookmarkCheck } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
+import { Badge } from "../components/ui/badge"
+import { Button } from "./ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
+import { useBookmarks } from "../hooks/useBookmarks"
+import type { Repository } from "./featured-repos"
+import { useState } from "react"
 
 interface RepoCardProps {
   repo: Repository
@@ -19,7 +19,7 @@ export function RepoCard({ repo }: RepoCardProps) {
   const [isHovered, setIsHovered] = useState(false)
 
   // Check if the current repo is already bookmarked
-  const isBookmarked = bookmarks.some(b => b.id === repo.id)
+  const isBookmarked = bookmarks.some((b) => b.id === repo.id)
 
   const formatNumber = (num: number) => {
     if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`
@@ -28,27 +28,27 @@ export function RepoCard({ repo }: RepoCardProps) {
   }
 
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    new Date(dateString).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
 
   const getLanguageColor = (language: string) => {
     const colors: Record<string, string> = {
-      JavaScript: 'from-yellow-400 to-yellow-600',
-      TypeScript: 'from-blue-400 to-blue-600',
-      Python: 'from-green-400 to-green-600',
-      React: 'from-cyan-400 to-cyan-600',
-      Vue: 'from-emerald-400 to-emerald-600',
-      Angular: 'from-red-400 to-red-600',
-      Go: 'from-cyan-500 to-blue-500',
-      Rust: 'from-orange-400 to-red-500',
-      Java: 'from-orange-500 to-red-600',
-      'C++': 'from-blue-500 to-purple-600',
-      PHP: 'from-purple-400 to-indigo-500',
-      Ruby: 'from-red-500 to-pink-500',
-      Swift: 'from-orange-500 to-red-500',
-      Kotlin: 'from-purple-500 to-pink-500',
-      'C#': 'from-purple-600 to-blue-600',
+      JavaScript: "from-yellow-400 to-yellow-600",
+      TypeScript: "from-blue-400 to-blue-600",
+      Python: "from-green-400 to-green-600",
+      React: "from-cyan-400 to-cyan-600",
+      Vue: "from-emerald-400 to-emerald-600",
+      Angular: "from-red-400 to-red-600",
+      Go: "from-cyan-500 to-blue-500",
+      Rust: "from-orange-400 to-red-500",
+      Java: "from-orange-500 to-red-600",
+      "C++": "from-blue-500 to-purple-600",
+      PHP: "from-purple-400 to-indigo-500",
+      Ruby: "from-red-500 to-pink-500",
+      Swift: "from-orange-500 to-red-500",
+      Kotlin: "from-purple-500 to-pink-500",
+      "C#": "from-purple-600 to-blue-600",
     }
-    return colors[language] || 'from-gray-400 to-gray-600'
+    return colors[language] || "from-gray-400 to-gray-600"
   }
 
   const getTrendingScore = () => {
@@ -62,16 +62,16 @@ export function RepoCard({ repo }: RepoCardProps) {
 
   return (
     <TooltipProvider>
-      <Card 
+      <Card
         className={`group relative overflow-hidden hover-lift glass-strong border-0 transition-all duration-500 ${
-          isHovered ? 'animate-pulse-glow' : ''
+          isHovered ? "animate-pulse-glow" : ""
         }`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Gradient border effect */}
         <div className="absolute inset-0 gradient-border opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
+
         {/* Shimmer effect */}
         <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100" />
 
@@ -85,19 +85,22 @@ export function RepoCard({ repo }: RepoCardProps) {
                 </Avatar>
                 <span className="text-xs text-muted-foreground truncate">{repo.owner.login}</span>
                 {trendingScore > 70 && (
-                  <Badge variant="secondary" className="px-1.5 py-0.5 text-xs bg-gradient-to-r from-orange-500/10 to-red-500/10 text-orange-600 border-orange-200">
+                  <Badge
+                    variant="secondary"
+                    className="px-1.5 py-0.5 text-xs bg-gradient-to-r from-orange-500/10 to-red-500/10 text-orange-600 border-orange-200"
+                  >
                     <TrendingUp className="w-3 h-3 mr-1" />
                     Hot
                   </Badge>
                 )}
               </div>
-              
+
               <CardTitle className="text-lg font-bold text-gradient leading-tight mb-1 group-hover:scale-105 transition-transform origin-left">
                 {repo.name}
               </CardTitle>
-              
+
               <CardDescription className="text-sm line-clamp-2 leading-relaxed">
-                {repo.description || 'No description available'}
+                {repo.description || "No description available"}
               </CardDescription>
             </div>
 
@@ -107,18 +110,18 @@ export function RepoCard({ repo }: RepoCardProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => isBookmarked ? removeBookmark(repo.id) : addBookmark(repo)}
+                    onClick={() => (isBookmarked ? removeBookmark(repo.id) : addBookmark(repo))}
                     className={`p-2 transition-all duration-300 ${
-                      isBookmarked 
-                        ? 'text-yellow-500 bg-yellow-500/10 hover:bg-yellow-500/20' 
-                        : 'text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10'
+                      isBookmarked
+                        ? "text-yellow-500 bg-yellow-500/10 hover:bg-yellow-500/20"
+                        : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10"
                     }`}
                   >
                     {isBookmarked ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{isBookmarked ? 'Remove bookmark' : 'Add bookmark'}</p>
+                  <p>{isBookmarked ? "Remove bookmark" : "Add bookmark"}</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -130,11 +133,7 @@ export function RepoCard({ repo }: RepoCardProps) {
                     asChild
                     className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300"
                   >
-                    <a
-                      href={repo.html_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </Button>
@@ -152,11 +151,11 @@ export function RepoCard({ repo }: RepoCardProps) {
           {repo.topics && repo.topics.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
               {repo.topics.slice(0, 3).map((topic, index) => (
-                <Badge 
-                  key={topic} 
-                  variant="secondary" 
+                <Badge
+                  key={topic}
+                  variant="secondary"
                   className={`text-xs px-2 py-1 bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 transition-colors cursor-pointer ${
-                    isHovered ? 'animate-float' : ''
+                    isHovered ? "animate-float" : ""
                   }`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
