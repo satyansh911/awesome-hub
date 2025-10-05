@@ -1,6 +1,6 @@
 'use client'
 
-import { Star, GitFork, Code, Sparkles, Zap, Trophy } from 'lucide-react'
+import { Sparkles, Zap, Trophy } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
