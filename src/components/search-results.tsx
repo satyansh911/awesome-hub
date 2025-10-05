@@ -1,30 +1,17 @@
-'use client'
+'use client';
 
-import { Star, GitFork, ExternalLink, Calendar, Loader2, Package } from 'lucide-react'
-
-interface Repository {
-  id: number
-  name: string
-  fullName: string
-  description: string | null
-  url: string
-  stars: number
-  forks: number
-  language: string | null
-  topics: string[]
-  owner: string
-  createdAt: string
-  updatedAt: string
-}
+import { Star, GitFork, ExternalLink, Calendar, Loader2, Package } from 'lucide-react';
+import { formatNumber, formatDate } from '@/lib/utils';
+import { GitHubRepo as Repository } from '@/lib/github';
 
 interface SearchResultsProps {
-  results: Repository[]
-  isLoading: boolean
-  hasMore: boolean
-  isLoadingMore: boolean
-  onLoadMore: () => void
-  searchQuery: string
-  category: string
+  results: Repository[];
+  isLoading: boolean;
+  hasMore: boolean;
+  isLoadingMore: boolean;
+  onLoadMore: () => void;
+  searchQuery: string;
+  category: string;
 }
 
 export function SearchResults({
@@ -34,26 +21,8 @@ export function SearchResults({
   isLoadingMore,
   onLoadMore,
   searchQuery,
-  category
+  category,
 }: SearchResultsProps) {
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
-    return num.toString()
-  }
-
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      })
-    } catch {
-      return 'Unknown'
-    }
-  }
-
   const getLanguageColor = (language: string | null) => {
     const colors: { [key: string]: string } = {
       JavaScript: 'bg-yellow-500',
@@ -74,9 +43,9 @@ export function SearchResults({
       Shell: 'bg-gray-700',
       Vue: 'bg-green-500',
       React: 'bg-blue-400',
-    }
-    return colors[language || ''] || 'bg-gray-500'
-  }
+    };
+    return colors[language || ''] || 'bg-gray-500';
+  };
 
   if (isLoading) {
     return (
@@ -91,7 +60,7 @@ export function SearchResults({
               Finding awesome repositories for &ldquo;{searchQuery || 'awesome'}&rdquo;
             </p>
           </div>
-          
+
           {/* Loading skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -124,7 +93,7 @@ export function SearchResults({
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -165,18 +134,21 @@ export function SearchResults({
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {results.map((repo) => (
-                <div key={repo.id} className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 group">
+                <div
+                  key={repo.id}
+                  className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 group"
+                >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {repo.name}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                        {repo.fullName}
-                      </p>
+                        {repo.full_name}
+                        </p>
                     </div>
                     <a
-                      href={repo.url}
+                      href={repo.html_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0"
@@ -185,11 +157,11 @@ export function SearchResults({
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
-                  
+
                   <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-2 min-h-[2.5rem]">
                     {repo.description || 'No description available'}
                   </p>
-                  
+
                   <div className="flex flex-wrap gap-1 mb-4 min-h-[2rem]">
                     {(repo.topics || []).slice(0, 5).map((topic) => (
                       <span
@@ -205,24 +177,24 @@ export function SearchResults({
                       </span>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-3">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4" />
-                        <span>{formatNumber(repo.stars)}</span>
+                        <span>{formatNumber(repo.stargazers_count)}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <GitFork className="w-4 h-4" />
-                        <span>{formatNumber(repo.forks)}</span>
+                        <span>{formatNumber(repo.forks_count)}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{formatDate(repo.updatedAt)}</span>
+                      <span>{formatDate(repo.updated_at, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     </div>
                   </div>
-                  
+
                   {repo.language && (
                     <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex items-center gap-2">
@@ -257,5 +229,5 @@ export function SearchResults({
         )}
       </div>
     </section>
-  )
+  );
 }
