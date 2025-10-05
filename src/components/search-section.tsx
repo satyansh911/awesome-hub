@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { Search, Sparkles, Hash, Zap, Globe, Code, Database, Shield, Server, Star, GitFork } from 'lucide-react';
-import { formatNumber, formatDate } from '@/lib/utils';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search, Hash, Zap, Globe, Code, Database, Shield, Server } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,8 +10,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Command as CommandPrimitive, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Repository } from '@/components/featured-repos';
 
 const categories = [
   { value: 'all', label: 'All Categories', icon: Globe, color: 'from-blue-500 to-purple-500' },
@@ -34,44 +31,36 @@ const trendingSearches = [
 
 export function SearchSection() {
   const router = useRouter();
-  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [isSearching, setIsSearching] = useState(false);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [searchResults, setSearchResults] = useState<Repository[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = async (category?: string) => {
-    setIsSearching(true);
-    setSearchResults([]);
-    setError('');
+  const navigateToSearch = useCallback(() => {
+    if (!searchQuery.trim() && selectedCategory === 'all') {
+      setError('Please enter a search term or select a category');
+      return;
+    }
 
+    setError(null);
+
+    // Build search params
     const params = new URLSearchParams();
-    if ((category ?? selectedCategory) !== 'all') {
-      params.append('topic', category ?? selectedCategory);
+    if (searchQuery.trim()) {
+      params.set('q', searchQuery.trim());
+    }
+    if (selectedCategory !== 'all') {
+      params.set('category', selectedCategory);
     }
 
-    router.replace(`${pathname}?${params.toString()}`);
+    // Navigate to search page
+    router.push(`/search?${params.toString()}`);
+  }, [router, searchQuery, selectedCategory]);
 
-    try {
-      const res = await fetch(`/api/search?${params.toString()}`);
-      if (!res.ok) {
-        throw new Error('Failed to search repositories');
-      }
-      const data = await res.json();
-      setSearchResults(data.repos || []);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      }
-    } finally {
-      setIsSearching(false);
-      setHasSearched(true);
-    }
-  };
+  const handleSearch = useCallback(() => {
+    navigateToSearch();
+  }, [navigateToSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -85,24 +74,24 @@ export function SearchSection() {
   };
 
   return (
-    <section className="relative py-16 px-6">
+    <section className="relative pb-16 px-6">
       {/* Background gradient */}
       <div className="absolute inset-0 gradient-mesh opacity-30" />
 
       <div className="relative max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
-            <Sparkles className="w-4 h-4" />
-            Discover • Explore • Create
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">
-            Find Your Perfect Repository
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Search through thousands of curated awesome lists and discover resources that will supercharge your development journey.
-          </p>
-        </div>
+        {/* <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <Sparkles className="w-4 h-4" />
+              Discover • Explore • Create
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">
+              Find Your Perfect Repository
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Search through thousands of curated awesome lists and discover resources that will supercharge your development journey.
+            </p>
+          </div> */}
 
         {/* Search Interface */}
         <Card className="glass-strong border-0 p-8 mb-8">
@@ -134,17 +123,18 @@ export function SearchSection() {
                 </div>
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* Filters */}
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-muted-foreground mb-2">Category</label>
-                  <Select
-                    value={selectedCategory}
-                    onValueChange={async (value) => {
-                      setSelectedCategory(value);
-                      await handleSearch(value);
-                    }}
-                  >
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                     <SelectTrigger className="w-full bg-background/50 border-border/50">
                       <div className="flex items-center gap-2">
                         <SelectValue />
@@ -167,22 +157,12 @@ export function SearchSection() {
                 <div className="md:w-auto">
                   <label className="block text-sm font-medium text-muted-foreground mb-2 md:invisible">Action</label>
                   <Button
-                    onClick={() => handleSearch()}
-                    disabled={isSearching}
+                    onClick={handleSearch}
                     size="lg"
                     className="w-full md:w-auto px-8 transition-all duration-300 group"
                   >
-                    {isSearching ? (
-                      <>
-                        <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2" />
-                        Searching...
-                      </>
-                    ) : (
-                      <>
-                        <Zap className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                        Search
-                      </>
-                    )}
+                    <Zap className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                    Search
                   </Button>
                 </div>
               </div>
@@ -251,121 +231,6 @@ export function SearchSection() {
             </CommandPrimitive>
           </PopoverContent>
         </Popover>
-
-        {/* Search Results */}
-        {(isSearching || hasSearched) && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-gray-900 dark:text-white text-xl font-semibold">Search Results</h3>
-              <div className="text-sm text-muted-foreground">
-                {isSearching ? 'Searching awesome repositories...' : `${searchResults.length} result(s)`}
-              </div>
-            </div>
-
-            {isSearching ? (
-              <div className="grid gap-4">
-                {[...Array(5)].map((_, i) => (
-                  <Card key={i} className="glass-strong border-0 p-6">
-                    <CardContent className="p-0">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="space-y-2 flex-1">
-                          <Skeleton className="h-5 w-48" />
-                          <Skeleton className="h-4 w-32" />
-                        </div>
-                        <Skeleton className="h-8 w-8 rounded-full" />
-                      </div>
-                      <Skeleton className="h-4 w-full mb-2" />
-                      <Skeleton className="h-4 w-3/4 mb-4" />
-                      <div className="flex items-center justify-between">
-                        <div className="flex gap-2">
-                          <Skeleton className="h-6 w-16 rounded-full" />
-                          <Skeleton className="h-6 w-20 rounded-full" />
-                        </div>
-                        <div className="flex gap-4">
-                          <Skeleton className="h-4 w-12" />
-                          <Skeleton className="h-4 w-12" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="grid gap-4">
-                {error && (
-                  <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                    <div className="text-red-500 text-center">{error}</div>
-                  </div>
-                )}
-
-                {!error && searchResults.length === 0 && (
-                  <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                    <div className="text-muted-foreground text-center">No repositories found.</div>
-                  </div>
-                )}
-
-                {!error && searchResults.length > 0 && (
-                  <div className="space-y-4">
-                    {searchResults.map((repo: Repository) => (
-                      <div
-                        key={repo.id}
-                        className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-200"
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <a
-                            href={repo.html_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
-                          >
-                            {repo.full_name}
-                          </a>
-
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4" />
-                              <span>{formatNumber(repo.stargazers_count)}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <GitFork className="w-4 h-4" />
-                              <span>{formatNumber(repo.forks_count)}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-2">
-                          {repo.description || 'No description available'}
-                        </p>
-
-                        <div className="flex items-start justify-between">
-                          <div className="flex flex-wrap gap-1">
-                            {repo.topics.slice(0, 3).map((topic) => (
-                              <span
-                                key={topic}
-                                className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
-                              >
-                                {topic}
-                              </span>
-                            ))}
-                            {repo.topics.length > 3 && (
-                              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
-                                +{repo.topics.length - 3}
-                              </span>
-                            )}
-                          </div>
-
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Updated: {formatDate(repo.updated_at, { year: 'numeric', month: 'short', day: 'numeric' })}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </section>
   );
